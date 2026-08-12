@@ -149,7 +149,7 @@ N_T=2,\qquad
 T=0.3.
 $$
 
-For \(N=5\) and \(N_T=2\), the truncated Carleman system has dimension
+For $N=5$ and $N_T=2$, the truncated Carleman system has dimension
 
 $$
 D=N+N^2=30.
