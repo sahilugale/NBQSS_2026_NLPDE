@@ -13,11 +13,7 @@ Implementation for the **2026 Niels Bohr Quantum Summer School (NBQSS) Challenge
 This repository explores the solution of the one-dimensional viscous Burgers equation
 
 $$
-\frac{\partial u}{\partial t}
-+
-u\frac{\partial u}{\partial x}
-=
-\nu\frac{\partial^2u}{\partial x^2}
+\frac{\partial u}{\partial t} + u\frac{\partial u}{\partial x} = \nu\frac{\partial^2u}{\partial x^2}
 $$
 
 using **Carleman linearization** followed by a **quantum linear systems approach based on block encoding and Quantum Singular Value Transformation (QSVT)**.
@@ -49,13 +45,7 @@ $$
 After spatial discretization, the Burgers equation is written in the quadratic form
 
 $$
-\dot{\mathbf u}
-=
-F_0
-+
-F_1\mathbf u
-+
-F_2(\mathbf u\otimes\mathbf u).
+\dot{\mathbf u} = F_0 + F_1\mathbf u + F_2(\mathbf u\otimes\mathbf u).
 $$
 
 Carleman linearization introduces the lifted state
@@ -79,9 +69,7 @@ $$
 Using implicit Euler,
 
 $$
-(I-\Delta t A)\mathbf y_{n+1}
-=
-\mathbf y_n+\Delta t\,\mathbf b.
+(I-\Delta t A)\mathbf y_{n+1} = \mathbf y_n+\Delta t\,\mathbf b.
 $$
 
 The resulting linear-system inversion is approximated using block encoding and QSVT.
