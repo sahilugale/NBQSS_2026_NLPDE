@@ -92,7 +92,7 @@ The resulting linear-system inversion is approximated using block encoding and Q
 .
 ├── Burgers_Carlemann.ipynb
 ├── Carlemann.py
-├── pyproject.toml
+├── requirements.txt
 ├── README.md
 └── references/
 ```
@@ -107,20 +107,20 @@ Clone the repository:
 
 ```bash
 git clone <repository-url>
-cd NBQSS_2026_NLPDE
+cd NQSS_2026_Challenge
 ```
 
-Create and activate an environment:
+Create and activate a virtual environment:
 
 ```bash
-conda create -n nqss_2026 python=3.13
-conda activate nqss_2026
+python3 -m venv nqss_2026
+source nqss_2026/bin/activate
 ```
 
-Install the project:
+Install the dependencies:
 
 ```bash
-pip install .
+pip install -r requirements.txt
 ```
 
 ## Running
@@ -157,15 +157,17 @@ $$
 
 ## Dependencies
 
-The implementation has been tested with:
+The implementation has been tested with Python 3.12 and the pinned versions in [`requirements.txt`](requirements.txt):
 
 ```text
-Python 3.13
 NumPy 2.5.2
+SciPy 1.18.0
 Matplotlib 3.11.1
 PennyLane 0.45.1
-pyqsp
+PennyLane-Lightning 0.45.0
+pyqsp 0.2.0
 Jupyter
+IPython 9.16.1
 ```
 
 ## References
