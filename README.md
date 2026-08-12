@@ -26,21 +26,7 @@ The implementation is primarily inspired by:
 
 The computational pipeline is
 
-$$
-\text{Burgers PDE}
-\rightarrow
-\text{finite-difference discretization}
-\rightarrow
-\text{quadratic ODE system}
-\rightarrow
-\text{Carleman linearization}
-\rightarrow
-\text{implicit Euler}
-\rightarrow
-\text{linear system}
-\rightarrow
-\text{QSVT}.
-$$
+**Burgers PDE** → **finite-difference discretization** → **quadratic ODE system** → **Carleman linearization** → **implicit Euler** → **linear system** → **QSVT**.
 
 After spatial discretization, the Burgers equation is written in the quadratic form
 
