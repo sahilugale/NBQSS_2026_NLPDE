@@ -1,21 +1,10 @@
-"""Carleman linearization of the viscous Burgers' equation, time-marched with
-an implicit Euler scheme whose linear solve at each step can be carried out
-either classically (``numpy.linalg.solve``) or on a quantum simulator via the
-Quantum Singular Value Transformation (QSVT).
+"""Carleman linearization of viscous Burgers (fixed-Dirichlet BC),
+implicit-Euler time-marched, solved classically or via QSVT.
 
-The module is split into two independent parts:
-
-* A general-purpose QSVT linear-algebra toolkit (block encoding, the
-  projector-controlled phase shift, and the QSVT circuit itself), built
-  entirely out of Qiskit primitives (``QuantumCircuit``, ``UnitaryGate``,
-  ``StatePreparation``, ``Statevector``, ``Operator``). These functions know
-  nothing about Burgers' equation -- they implement A^{-1} @ b (approximately,
-  via a polynomial approximation of 1/x) for any Hermitian-normalized matrix
-  A and vector b, and can be reused for any QSVT-based linear solve.
-
-* The ``Burgers_Carlemann`` class, which builds the Carleman-linearized
-  system for Burgers' equation and time-marches it, using the toolkit above
-  for the quantum-solved variant.
+Two parts: a general-purpose QSVT linear-algebra toolkit (block encoding,
+projector-controlled phase shift, QSVT circuit -- PDE-agnostic, reusable
+for any QSVT linear solve), and `Burgers_Carlemann`, which builds the
+Carleman-linearized system and time-marches it using that toolkit.
 """
 
 import math

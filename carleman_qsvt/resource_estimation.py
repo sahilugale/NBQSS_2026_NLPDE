@@ -1,23 +1,15 @@
-"""Resource comparison between the two QSVT block encodings implemented for
-the Carleman-linearized Burgers' equation solve:
+"""Resource comparison between the two QSVT block encodings (dense,
+`burgers.block_encode_matrix`; Pauli-LCU, `lcu.py`) used by the
+Carleman-linearized Burgers/KdV solves. Builds ONE block-encoding layer as
+a transpiled Qiskit circuit per method, then extrapolates to the full
+QSVT circuit (kappa=8, 560 phase angles) by multiplying out the per-layer
+gate counts, rather than transpiling all 560 layers directly.
 
-  * the dense/arbitrary block encoding (`Carlemann_qiskit.block_encode_matrix`),
-  * the Pauli-LCU block encoding (`Carlemann_qiskit_lcu`).
+`_carleman_matrix` / `_carleman_matrix_kdv` build the Burgers/KdV systems
+(N=5, N_T=2, matching each notebook). `dense_layer_stats` / `lcu_layer_stats`
+/ `projector_layer_stats` / `extrapolate_total` are matrix-agnostic.
 
-Both realize the *same* mathematical operation (block-encode A, then apply a
-QSVT polynomial to it), so a fair comparison is: build ONE occurrence of the
-block-encoding unitary as a real, gate-level Qiskit circuit for each method,
-transpile it to a fixed two-qubit-gate basis, and report standard resource
-metrics -- qubit count, gate count, two-qubit (CX) gate count, and circuit
-depth. Since a QSVT circuit is just this block-encoding layer (and a cheap
-diagonal projector layer) repeated ~2 x (polynomial degree) times, the
-per-layer cost is multiplied out to estimate the resources of the full QSVT
-circuit for the polynomial degree actually used in the notebook (kappa=8,
-560 phase angles) -- multiplying out rather than building and transpiling
-the whole 560-layer circuit directly, which would cost the same synthesis
-work 560 times over for no additional information.
-
-Run as a script: `python resource_estimation.py`.
+Run as a script: `python resource_estimation.py` (Burgers only).
 """
 
 import time
@@ -26,13 +18,14 @@ import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit.library import PhaseGate, UnitaryGate
 
-from Carlemann_qiskit import (
+from burgers import (
     Burgers_Carlemann,
     block_encode_matrix,
     compute_inverse_qsvt_angles,
     next_power_of_two,
 )
-from Carlemann_qiskit_lcu import build_lcu_block_encoding_gate_circuit, pauli_lcu_terms
+from kdv import KdV_Carlemann
+from lcu import build_lcu_block_encoding_gate_circuit, pauli_lcu_terms
 
 BASIS_GATES = ["cx", "u3"]
 OPTIMIZATION_LEVEL = 1
@@ -43,6 +36,19 @@ def _carleman_matrix():
     tutorial notebook (N=5, N_T=2, as used throughout)."""
     bc = Burgers_Carlemann(N=5, N_T=2, total_time=0.3, mu=0.01, dt=0.1, u0=0, uN1=0, stencil="method_2")
     A = bc.get_I_m_Adt()
+    Dim = A.shape[0]
+    padded_dim = next_power_of_two(Dim)
+    A_padded = np.eye(padded_dim)
+    A_padded[:Dim, :Dim] = A
+    return A_padded.T, Dim, padded_dim
+
+
+def _carleman_matrix_kdv(N=5, N_T=2, total_time=0.3, delta=0.02, dt=0.1, ic="cos"):
+    """The padded implicit-Euler matrix for the KdV tutorial notebook.
+    delta=0.02 at N=6 sits in the Carleman-convergent window identified by
+    `kdv_convergence_study.py` (linear/nonlinear norm ratio ~4)."""
+    kdv = KdV_Carlemann(N, N_T, total_time, delta, dt, ic=ic)
+    A = kdv.get_I_m_Adt()
     Dim = A.shape[0]
     padded_dim = next_power_of_two(Dim)
     A_padded = np.eye(padded_dim)
@@ -168,7 +174,7 @@ def main():
         "\nTakeaway: for this specific matrix, the dense block encoding is cheaper in\n"
         "absolute gate count, because its Pauli decomposition is not sparse (358 of\n"
         f"{4**n_sys} possible terms are nonzero, vs. only {int(np.max(np.sum(np.abs(M) > 1e-12, axis=1)))} nonzeros per row in the\n"
-        "computational basis -- see the module docstring in Carlemann_qiskit_lcu.py).\n"
+        "computational basis -- see the module docstring in lcu.py).\n"
         "LCU's real advantage is asymptotic and structural, not shown by this one data\n"
         "point: the dense encoding's cost is exponential in the number of block-encoded\n"
         "qubits (2**n_wires) *regardless of matrix structure*, whereas an LCU built from\n"

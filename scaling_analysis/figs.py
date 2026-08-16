@@ -2,8 +2,6 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import sys
-sys.path.insert(0, '/home/claude')
 import scaling
 from scaling import carleman_L
 
@@ -41,7 +39,7 @@ ax[1].set_xlabel(r'Carleman order $N$')
 ax[1].set_ylabel(r'$P_1$  (block-1 post-selection)')
 ax[1].legend(frameon=False, fontsize=8)
 ax[1].set_title(r'(b) cost of reading $\hat{u}$ out of $\hat{y}$', fontsize=9)
-plt.savefig('/home/claude/fig_carleman.pdf')
+plt.savefig('fig_carleman.pdf')
 plt.close()
 
 # ---------------- Fig 2 : subnormalisation alpha, two block-encoding routes -----
@@ -85,7 +83,7 @@ ax[1].set_xlabel(r'Carleman order $N$'); ax[1].set_xticks([2, 3])
 ax[1].set_ylabel(r'subnormalisation $\alpha$')
 ax[1].legend(frameon=False, fontsize=7, ncol=2)
 ax[1].set_title(r'(b) growth with $N$', fontsize=9)
-plt.savefig('/home/claude/fig_alpha.pdf')
+plt.savefig('fig_alpha.pdf')
 plt.close()
 
 # ---------------- Fig 3 : depth model calibration -----------------------------
@@ -107,6 +105,6 @@ for p, m, l in zip(pred, meas, labs):
 ax.set_xlabel(r'model  $d\,(c_{\rm BE}n_{\rm data}q_M^2+c_\Pi m_{\rm flag}^2)$')
 ax.set_ylabel(r'reported two-qubit depth (heavy-hex)')
 ax.set_title(r'$c_{\rm BE}=10,\ c_\Pi=15$; dotted: factor 2', fontsize=8)
-plt.savefig('/home/claude/fig_depth.pdf')
+plt.savefig('fig_depth.pdf')
 plt.close()
 print("figures written")

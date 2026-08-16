@@ -1,58 +1,18 @@
-"""Linear-Combination-of-Unitaries (LCU) block encoding, as an alternative to
-the dense/arbitrary block encoding in `Carlemann_qiskit.py`.
+"""Linear-Combination-of-Unitaries (LCU) block encoding, alternative to the
+dense/arbitrary block encoding in `burgers.py`. Standard PREPARE / SELECT /
+PREPARE-dagger construction from A's Pauli decomposition A = sum_k c_k P_k;
+postselecting the ancilla on |0..0> yields A/alpha in the system block
+(alpha = sum_k |c_k|).
 
-Any matrix A can be written as a weighted sum of Pauli strings,
-A = sum_k c_k P_k (each P_k both unitary and Hermitian), since the Pauli
-strings form a complete basis of the space of matrices on n qubits. That
-decomposition gives a standard "PREPARE / SELECT / PREPARE-dagger" block
-encoding:
+Two representations: `qsvt_apply_state_lcu` (fast statevector simulator,
+never forms the block-encoding matrix explicitly) and
+`build_lcu_block_encoding_gate_circuit` (real gate-level circuit, for
+resource estimation). `lcu_block_encode_matrix` is dense-matrix only, for
+validation on small examples.
 
-  * PREPARE loads an ancilla register with amplitudes proportional to
-    sqrt(|c_k|), so that PREPARE|0> = (1/sqrt(alpha)) * sum_k sqrt(|c_k|) |k>,
-    with alpha = sum_k |c_k|.
-  * SELECT applies, controlled on the ancilla register reading out |k>, the
-    unitary (c_k / |c_k|) * P_k to the system register -- i.e. the Pauli
-    string together with whatever phase c_k carries (Pauli coefficients of a
-    real matrix are always real or purely imaginary, so this phase is
-    always one of {+1, -1, +i, -i}).
-  * PREPARE-dagger unprepares the ancilla.
-
-Postselecting the ancilla on |0...0> then yields exactly A / alpha in the
-system-register block, i.e. this is a valid block encoding with
-normalization factor alpha (playing the same role as the `norm` returned by
-`block_encode_matrix` in the dense-encoding module).
-
-Two representations of this block encoding are provided:
-
-  * A fast statevector-level simulator (`qsvt_apply_state_lcu` and the
-    functions it is built from), which applies PREPARE/SELECT/PREPARE-dagger
-    directly to a statevector reshaped as (ancilla, system) instead of ever
-    forming the full block-encoding unitary as a dense matrix. The number of
-    Pauli terms L needed for this particular matrix is large (see note
-    below), so its ancilla register is too big (2**ceil(log2(L)) dimensional)
-    for the dense-matrix approach used by the other block encoding -- this
-    is what makes LCU worthwhile in the first place: SELECT is applied term
-    by term, each term touching only the small system register, so the cost
-    stays linear in L rather than exponential in the ancilla qubit count.
-  * A real gate-level circuit (`build_lcu_block_encoding_gate_circuit`),
-    with PREPARE as a `StatePreparation` instruction and SELECT as a
-    sequence of ancilla-controlled single-qubit Pauli gates (one per
-    non-identity Pauli factor of each term), used for resource estimation
-    (qubit count, gate count, circuit depth) in `resource_estimation.py`.
-    `lcu_block_encode_matrix` builds the same circuit's dense unitary
-    matrix, for validating the gate-level circuit and for small examples --
-    it is not used on the full-size Burgers-Carlemann system, since forming
-    that matrix explicitly is exactly the exponential cost LCU avoids.
-
-Note on this particular problem: because the Carleman-linearized Burgers
-matrix has a shift/Kronecker structure rather than a Pauli-diagonal one, its
-Pauli decomposition is *not* sparse (most of the 4**n_sys Pauli coefficients
-are nonzero) -- unlike, e.g., typical local Hamiltonians. Each SELECT term is
-still cheap (polynomial in the number of qubits), but there are many terms
-(hundreds, for the system sizes used here). A sparse-access oracle that
-exploits the matrix's small number of nonzeros per row directly (rather than
-its Pauli decomposition) would need far fewer terms; that is a natural
-follow-up but is not implemented here.
+Note: the Carleman-linearized matrix's Pauli decomposition is NOT sparse
+(shift/Kronecker structure, not Pauli-diagonal) despite being sparse in the
+computational basis -- see `resource_estimation.py` for the consequence.
 """
 
 import math
@@ -63,7 +23,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit.library import StatePreparation, UnitaryGate
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 
-from Carlemann_qiskit import _reversed_qubits, projector_phase_matrix
+from burgers import _reversed_qubits, projector_phase_matrix
 
 
 # =============================================================================
@@ -186,10 +146,10 @@ def get_implicit_solver_qsvt_lcu(burgers_carlemann, phi, s, tol=1e-10, verbose=T
     march and the same (matrix-independent) `qsvt_success_probability`
     diagnostic, but the per-step linear solve uses the LCU block encoding
     instead of the dense one. Takes a `Burgers_Carlemann` instance (from
-    Carlemann_qiskit.py) so the classical PDE/Carleman machinery is reused
+    burgers.py) so the classical PDE/Carleman machinery is reused
     rather than duplicated.
     """
-    from Carlemann_qiskit import next_power_of_two, qsvt_success_probability
+    from burgers import next_power_of_two, qsvt_success_probability
 
     y_init = burgers_carlemann.get_y_init()
     n_timesteps = burgers_carlemann.get_n_timesteps()

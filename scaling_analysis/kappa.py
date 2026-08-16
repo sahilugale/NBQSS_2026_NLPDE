@@ -1,7 +1,5 @@
 import numpy as np
 from scipy import sparse
-import sys
-sys.path.insert(0, '/home/claude')
 from scaling import carleman_L
 
 print("Which 'kappa' matches Setty's design choices?\n")
