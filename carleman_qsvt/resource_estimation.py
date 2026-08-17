@@ -170,17 +170,6 @@ def main():
     for key in ("gate_count", "two_qubit_gates", "depth"):
         print(f"  {key:16s}: {lcu_total[key] / dense_total[key]:.1f}x")
 
-    print(
-        "\nTakeaway: for this specific matrix, the dense block encoding is cheaper in\n"
-        "absolute gate count, because its Pauli decomposition is not sparse (358 of\n"
-        f"{4**n_sys} possible terms are nonzero, vs. only {int(np.max(np.sum(np.abs(M) > 1e-12, axis=1)))} nonzeros per row in the\n"
-        "computational basis -- see the module docstring in lcu.py).\n"
-        "LCU's real advantage is asymptotic and structural, not shown by this one data\n"
-        "point: the dense encoding's cost is exponential in the number of block-encoded\n"
-        "qubits (2**n_wires) *regardless of matrix structure*, whereas an LCU built from\n"
-        "a genuinely sparse decomposition would scale with the matrix's sparsity instead."
-    )
-
 
 if __name__ == "__main__":
     main()

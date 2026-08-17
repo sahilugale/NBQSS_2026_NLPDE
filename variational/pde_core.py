@@ -1,7 +1,7 @@
 """Shared, general-n circuit primitives for the variational PDE pathway --
 generalizes `kdv.py`'s n=2-specific ansatz/shift/Hadamard-test/
-nonlinear-overlap circuits to arbitrary qubit count n (used by `burgers.py`
-and `comparison/kdv_general_n.py`). See `kdv.py` for the derivations.
+nonlinear-overlap circuits to arbitrary qubit count n (used by `burgers.py`).
+See `kdv.py` for the derivations.
 
 - `ansatz(n, theta)`: n-qubit real-amplitude circuit, full expressivity.
 - `shift_gate(n)`: ripple-carry cyclic increment, |m> -> |m+1 mod 2**n>.

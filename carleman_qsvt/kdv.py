@@ -2,10 +2,9 @@
 
     u_t + u u_x + delta * u_xxx = 0,   periodic BC on [0, 1],
 
-implicit-Euler time marching via `periodic_carleman.PeriodicCarleman`
-(shared with `periodic_burgers.py`); only PDE-specific data here
-(`get_Fs`, `get_init_state`). Uses `burgers.py`'s QSVT toolkit and
-`lcu.py`'s Pauli-LCU encoding, both PDE-agnostic.
+implicit-Euler time marching via `periodic_carleman.PeriodicCarleman`;
+only PDE-specific data here (`get_Fs`, `get_init_state`). Uses `burgers.py`'s
+QSVT toolkit and `lcu.py`'s Pauli-LCU encoding, both PDE-agnostic.
 
 F1 = -delta*D3 is skew-symmetric (non-dissipative), unlike Burgers'
 symmetric diffusion -- `kdv_convergence_study.py` found the narrow

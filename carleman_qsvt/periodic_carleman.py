@@ -2,8 +2,7 @@
 
     u_t = F1 u + F2 (u kron u),
 
-shared by `kdv.py` (F1 = dispersion) and `periodic_burgers.py` (F1 =
-diffusion). Block assembly, implicit-Euler marching, dense-QSVT and
+used by `kdv.py`. Block assembly, implicit-Euler marching, dense-QSVT and
 Pauli-LCU solves are all PDE-agnostic; subclasses implement only
 `get_Fs()` and `get_init_state()`.
 

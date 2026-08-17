@@ -25,9 +25,6 @@ $$
    parametrized circuit and step forward in time by minimizing a Hadamard-test-based variational
    consistency cost function, avoiding Carleman's enlarged linear embedding entirely.
 
-`comparison/` puts both methods side by side on the same problem instance (same grid, timestep,
-initial condition, and physical parameters) to compare accuracy and quantum resource cost directly.
-
 ## Method 1: Carleman linearization + QSVT
 
 **PDE → finite-difference discretization → quadratic ODE → Carleman linearization → implicit Euler
@@ -99,9 +96,11 @@ classical optimization loop per timestep instead of a single quantum linear solv
 │   ├── pde_core.py                # shared ansatz / shift / Hadamard-test / nonlinear-overlap circuits
 │   ├── burgers.py                 # viscous Burgers cost function (diffusion term)
 │   ├── kdv.py                     # KdV cost function (dispersion term)
+│   ├── fake_hardware.py           # noisy readout via a real fake-backend calibration snapshot
 │   ├── Burgers_variational_qiskit.ipynb
-│   └── KdV_variational_qiskit.ipynb
-├── comparison/                    # both methods on the same problem instance
+│   ├── KdV_variational_qiskit.ipynb
+│   ├── Burgers_fake_hardware_qiskit.ipynb
+│   └── KdV_fake_hardware_qiskit.ipynb
 ├── scaling_analysis/              # companion scaling-limitations study (Nadav Carmel)
 │   └── qlsp_burgers.tex/.pdf, scaling.py, kappa.py, verify.py, figs.py
 ├── references/                    # challenge PDF and the original PennyLane prototype
@@ -129,7 +128,8 @@ jupyter notebook carleman_qsvt/Burgers_Carlemann_qiskit.ipynb
 jupyter notebook carleman_qsvt/KdV_Carlemann_qiskit.ipynb
 jupyter notebook variational/Burgers_variational_qiskit.ipynb
 jupyter notebook variational/KdV_variational_qiskit.ipynb
-jupyter notebook comparison/method_comparison.ipynb
+jupyter notebook variational/Burgers_fake_hardware_qiskit.ipynb
+jupyter notebook variational/KdV_fake_hardware_qiskit.ipynb
 ```
 
 ## Dependencies
@@ -137,8 +137,11 @@ jupyter notebook comparison/method_comparison.ipynb
 Tested with Python 3.12 and the pinned versions in [`requirements.txt`](requirements.txt):
 
 ```text
-NumPy, SciPy, Matplotlib, Qiskit, pyqsp, Jupyter, IPython
+NumPy, SciPy, Matplotlib, Qiskit, qiskit-aer, qiskit-ibm-runtime, pyqsp, IPython, nbclient, nbformat
 ```
+
+`qiskit-ibm-runtime` is only used for its `fake_provider` (offline device calibration snapshots
+used by `variational/fake_hardware.py`) -- no account or network access needed.
 
 ## References
 
