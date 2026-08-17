@@ -1,23 +1,17 @@
-"""Noisy readout of already-optimized variational circuits on a real fake
-backend (FakeSherbrooke calibration snapshot), via qiskit-aer.
+"""Noisy readout of optimized variational circuits on a FakeSherbrooke
+calibration snapshot (qiskit-aer), via shot-based sampling -- BackendSamplerV2,
+not Estimator or density-matrix simulation, since that's what a real QPU gives you.
 
-Transpiling straight to `backend=` embeds the circuit in its full qubit
-count (127 here), which blows up density-matrix simulation -- so we
-transpile against a coupling map reduced to just the qubits we need
-(reduce() keeps their original indices, so the noise model's per-qubit
-error rates still apply correctly).
-
-`ansatz_fn(theta) -> QuantumCircuit` is passed in by the caller rather than
-imported here, since Burgers and KdV use different ansatz constructions
-(pde_core's general-n one vs. kdv.py's fixed n=2 one).
+ansatz_fn(theta) -> QuantumCircuit is passed in since Burgers and KdV use
+different ansatz constructions.
 """
 
 import numpy as np
-from qiskit import transpile
+from qiskit import transpile, QuantumCircuit, ClassicalRegister
+from qiskit.primitives import BackendSamplerV2
 from qiskit_ibm_runtime.fake_provider import FakeSherbrooke
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
-from qiskit.quantum_info import Statevector, state_fidelity
 
 
 def make_fake_backend(n_qubits):
@@ -28,26 +22,34 @@ def make_fake_backend(n_qubits):
     return noise_model, sim, reduced_cm
 
 
-def noisy_density_matrix(ansatz_fn, theta, noise_model, sim, coupling_map):
-    qc = transpile(ansatz_fn(theta), basis_gates=noise_model.basis_gates,
-                    coupling_map=coupling_map, optimization_level=1)
-    qc.save_density_matrix()
-    result = sim.run(qc).result()
-    return result.data(0)["density_matrix"]
+def _amplitude_circuit(n, theta, i, ansatz_fn):
+    """Hadamard test for Re<i|ansatz(theta)>."""
+    qc = QuantumCircuit(n + 1)
+    qc.h(0)
+    qc.append(ansatz_fn(theta).to_gate().control(1), range(n + 1))
+    bits = format(i, f"0{n}b")[::-1]
+    for q, b in enumerate(bits):
+        if b == "1":
+            qc.cx(0, 1 + q)
+    qc.h(0)
+    qc.add_register(ClassicalRegister(1, "anc"))
+    qc.measure(0, 0)
+    return qc
 
 
-def noisy_state_fidelity(ansatz_fn, theta, noise_model, sim, coupling_map):
-    ideal_sv = Statevector(ansatz_fn(theta))
-    rho = noisy_density_matrix(ansatz_fn, theta, noise_model, sim, coupling_map)
-    return state_fidelity(ideal_sv, rho)
-
-
-def noisy_decoded_state(ansatz_fn, theta_full, noise_model, sim, coupling_map):
+def noisy_decoded_state(ansatz_fn, theta_full, noise_model, sim, coupling_map, n=None, shots=2000):
     amp = theta_full[0]
-    ideal_sv = np.real(Statevector(ansatz_fn(theta_full[1:])).data)
-    rho = noisy_density_matrix(ansatz_fn, theta_full[1:], noise_model, sim, coupling_map)
-    evals, evecs = np.linalg.eigh(rho.data)
-    v = np.real(evecs[:, -1])
-    if np.dot(v, ideal_sv) < 0:
-        v = -v
-    return v * amp
+    theta = theta_full[1:]
+    n = n if n is not None else int(np.log2(len(theta_full) - 1))
+    N = 2 ** n
+    sampler = BackendSamplerV2(backend=sim)
+
+    values = []
+    for i in range(N):
+        qc = _amplitude_circuit(n, theta, i, ansatz_fn)
+        tqc = transpile(qc, basis_gates=noise_model.basis_gates,
+                         coupling_map=coupling_map, optimization_level=0)
+        counts = sampler.run([tqc], shots=shots).result()[0].data.anc.get_counts()
+        p0, p1 = counts.get("0", 0), counts.get("1", 0)
+        values.append((p0 - p1) / (p0 + p1))
+    return np.array(values) * amp
