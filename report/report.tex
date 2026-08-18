@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{bm}
 \usepackage{quantikz}
+\usepackage{enumitem}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 
 \newtheorem{proposition}{Proposition}
@@ -708,11 +709,54 @@ circuits rather than by estimation, that the variational method's resources scal
 polylogarithmically in grid size while the Carleman--QSVT dense block encoding scales as $O(N^4)$,
 quantifying precisely the trade-off between the two approaches.
 
+\begin{figure*}[t]
+\centering
+\fbox{\begin{minipage}{0.96\textwidth}
+\textbf{Challenge requirements: what this work delivers.}
+\begin{description}[leftmargin=1.2em,style=nextline]
+\item[Solved both PDEs] the challenge asks for one of Burgers or KdV; we solve both, each with two
+independent algorithms.
+\item[Amplitude-encoding oracle, $N=2^n$] used throughout, both pathways (Sec.~\ref{sec:variational},
+Table~\ref{tab:variational}; $N=5,4$ for Carleman, Table~\ref{tab:carleman}).
+\item[Linearization before the quantum algorithm] Carleman linearization (Sec.~\ref{sec:carleman}) for
+pathway A; pathway B amplitude-encodes the field directly and needs no linearization at all, a second
+route the challenge explicitly allows.
+\item[Prepares $\mathrm{amp}\ket{\psi(\bm\theta)}$ of the solution at time $T$] the stated goal of the
+challenge, achieved and verified by both pathways (Tables~\ref{tab:carleman},~\ref{tab:variational}).
+\item[Resource estimates] query/gate complexity, qubit counts, and (Carleman) QSVT success
+probability, both as exact numbers for the systems solved (Tables~\ref{tab:carleman-resources},
+\ref{tab:variational-resources}) and as a measured asymptotic scaling study
+(Sec.~\ref{sec:scaling}, Table~\ref{tab:bigo}) --- not estimated.
+\item[Implemented in Qiskit] all four notebooks (both PDEs $\times$ both pathways) run end to end.
+\item[Section 3 bound, $L^2$] $\norm{u(t)}_2\le\norm{u_0}_2$ (Burgers) and
+$\norm{u(t)}_2=\norm{u_0}_2$ (KdV) --- both \emph{proved exactly} (Sec.~\ref{sec:closure}), not just
+observed, and confirmed numerically to $10^{-10}$--$10^{-17}$ throughout.
+\item[Section 3 bound, $L^\infty$, Burgers] $\norm{u(t)}_\infty\le\norm{u_0}_\infty$: verified and its
+grid-resolution requirement derived (Sec.~\ref{sec:reynolds}) via the cell Reynolds number.
+\end{description}
+\textbf{Not fully addressed:} the KdV $L^\infty$ bound of Eq.~(7) in the challenge statement (the one
+depending on $\norm{u_0}_2^2+\norm{\partial_xu_0}_{L^2}^2$) was not separately verified beyond the
+exact $L^2$ result above. The suggested initial conditions $\cos(4\pi x)$ and
+$\mathrm{sech}^2(40(x-1/2))$ for KdV were not used: both are numerically degenerate at the small grid
+sizes this work targets ($\cos(4\pi x)$'s discrete nonlinear term vanishes exactly for $N\le8$;
+$\mathrm{sech}^2(40(x-1/2))$ is an unresolved single-point spike even at $N=16$), so a custom
+small-amplitude periodic array was used instead for both pathways.
+\end{minipage}}
+\end{figure*}
+
 \begin{acknowledgments}
 We thank the organizers of the 2026 Niels Bohr Quantum Summer School Challenge on Quantum Simulation
 of Nonlinear Partial Differential Equations, Center for Quantum Mathematics, University of Southern
 Denmark.
 \end{acknowledgments}
+
+\section*{AI disclosure}
+Substantial parts of this work's implementation, debugging, numerical verification, and this
+manuscript were produced with the assistance of Claude (Anthropic), used interactively under the
+direction and review of the authors. All physical claims, discretization choices, and numerical
+results in this paper were independently verified against classical reference calculations rather
+than accepted on the model's assertion alone; every proof was checked step by step; every cited
+reference was checked against its original source before inclusion.
 
 \bibliographystyle{apsrev4-2}
 \begin{thebibliography}{99}
