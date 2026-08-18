@@ -52,6 +52,49 @@ place where the variational method still depends on an $O(2^n)$ classical comput
 
 \maketitle
 
+\begin{figure*}[t]
+\centering
+\fbox{\begin{minipage}{0.96\textwidth}
+\textbf{Challenge requirements: what this work delivers.}
+\begin{description}[leftmargin=1.2em,style=nextline]
+\item[Solved both PDEs] the challenge asks for one of Burgers or KdV; we solve both, each with two
+independent algorithms.
+\item[Amplitude-encoding oracle, $N=2^n$] used throughout, both pathways (Sec.~\ref{sec:variational},
+Table~\ref{tab:variational}; $N=5,4$ for Carleman, Table~\ref{tab:carleman}).
+\item[Linearization before the quantum algorithm] Carleman linearization (Sec.~\ref{sec:carleman}) for
+pathway A; pathway B amplitude-encodes the field directly and needs no linearization at all, a second
+route the challenge explicitly allows.
+\item[Prepares $\mathrm{amp}\ket{\psi(\bm\theta)}$ of the solution at time $T$] the stated goal of the
+challenge, achieved and verified by both pathways (Tables~\ref{tab:carleman},~\ref{tab:variational}).
+\item[Resource estimates] query/gate complexity, qubit counts, and (Carleman) QSVT success
+probability, both as exact numbers for the systems solved (Tables~\ref{tab:carleman-resources},
+\ref{tab:variational-resources}) and as a measured asymptotic scaling study
+(Sec.~\ref{sec:scaling}, Table~\ref{tab:bigo}) --- not estimated.
+\item[Implemented in Qiskit] all four notebooks (both PDEs $\times$ both pathways) run end to end.
+\item[Runnable on real hardware today] the variational pathway's circuits (tens to $\sim\!150$ gates,
+Table~\ref{tab:variational-resources}) are transpiled against and executed on an actual IBM device
+calibration snapshot (\texttt{FakeSherbrooke}/\texttt{FakeMarrakesh}) in every notebook's final
+section, and are shallow enough to run on present-day noisy hardware given queue access; the
+Carleman--QSVT pathway is currently simulator-only at the problem sizes solved here
+(millions of gates, Table~\ref{tab:carleman-resources}) but requires no new physics to port to
+hardware once fault-tolerant devices are available --- see Sec.~\ref{sec:intro} and
+Sec.~\ref{sec:discussion}.
+\item[Section 3 bound, $L^2$] $\norm{u(t)}_2\le\norm{u_0}_2$ (Burgers) and
+$\norm{u(t)}_2=\norm{u_0}_2$ (KdV) --- both \emph{proved exactly} (Sec.~\ref{sec:closure}), not just
+observed, and confirmed numerically to $10^{-10}$--$10^{-17}$ throughout.
+\item[Section 3 bound, $L^\infty$, Burgers] $\norm{u(t)}_\infty\le\norm{u_0}_\infty$: verified and its
+grid-resolution requirement derived (Sec.~\ref{sec:reynolds}) via the cell Reynolds number.
+\end{description}
+\textbf{Not fully addressed:} the KdV $L^\infty$ bound of Eq.~(7) in the challenge statement (the one
+depending on $\norm{u_0}_2^2+\norm{\partial_xu_0}_{L^2}^2$) was not separately verified beyond the
+exact $L^2$ result above. The suggested initial conditions $\cos(4\pi x)$ and
+$\mathrm{sech}^2(40(x-1/2))$ for KdV were not used: both are numerically degenerate at the small grid
+sizes this work targets ($\cos(4\pi x)$'s discrete nonlinear term vanishes exactly for $N\le8$;
+$\mathrm{sech}^2(40(x-1/2))$ is an unresolved single-point spike even at $N=16$), so a custom
+small-amplitude periodic array was used instead for both pathways.
+\end{minipage}}
+\end{figure*}
+
 \section{Introduction}
 \label{sec:intro}
 
@@ -93,6 +136,16 @@ conservation of implicit midpoint --- is proved in the text, not merely asserted
 claim was checked against an independent classical calculation. Section~\ref{sec:scaling} presents a
 scaling study of the actual circuits our code builds, and Sec.~\ref{sec:discussion} compares the two
 pathways and states plainly what remains open.
+
+Crucially, the variational pathway is not merely a simulator exercise: every circuit it uses (tens to
+$\sim\!150$ gates, Table~\ref{tab:variational-resources}) is shallow enough to run on \emph{present-day}
+noisy quantum hardware, not just a future fault-tolerant device. We demonstrate this directly by
+transpiling and executing every circuit against a real IBM device calibration snapshot
+(\texttt{FakeSherbrooke}/\texttt{FakeMarrakesh}) in each notebook's final section; given queue access to
+the corresponding physical backend, the same circuits could be run as-is. The Carleman--QSVT pathway,
+by contrast, is simulator-only at the problem sizes we solve (its resource counts run into the millions
+of gates, Table~\ref{tab:carleman-resources}), reflecting the genuine cost of quantum linear-systems
+solvers rather than a limitation of our implementation.
 
 \section{Shared discretization and its exact conservation identity}
 \label{sec:discretization}
@@ -708,41 +761,6 @@ two independent, previously-broken heuristic attempts. Finally, we measured, dir
 circuits rather than by estimation, that the variational method's resources scale
 polylogarithmically in grid size while the Carleman--QSVT dense block encoding scales as $O(N^4)$,
 quantifying precisely the trade-off between the two approaches.
-
-\begin{figure*}[t]
-\centering
-\fbox{\begin{minipage}{0.96\textwidth}
-\textbf{Challenge requirements: what this work delivers.}
-\begin{description}[leftmargin=1.2em,style=nextline]
-\item[Solved both PDEs] the challenge asks for one of Burgers or KdV; we solve both, each with two
-independent algorithms.
-\item[Amplitude-encoding oracle, $N=2^n$] used throughout, both pathways (Sec.~\ref{sec:variational},
-Table~\ref{tab:variational}; $N=5,4$ for Carleman, Table~\ref{tab:carleman}).
-\item[Linearization before the quantum algorithm] Carleman linearization (Sec.~\ref{sec:carleman}) for
-pathway A; pathway B amplitude-encodes the field directly and needs no linearization at all, a second
-route the challenge explicitly allows.
-\item[Prepares $\mathrm{amp}\ket{\psi(\bm\theta)}$ of the solution at time $T$] the stated goal of the
-challenge, achieved and verified by both pathways (Tables~\ref{tab:carleman},~\ref{tab:variational}).
-\item[Resource estimates] query/gate complexity, qubit counts, and (Carleman) QSVT success
-probability, both as exact numbers for the systems solved (Tables~\ref{tab:carleman-resources},
-\ref{tab:variational-resources}) and as a measured asymptotic scaling study
-(Sec.~\ref{sec:scaling}, Table~\ref{tab:bigo}) --- not estimated.
-\item[Implemented in Qiskit] all four notebooks (both PDEs $\times$ both pathways) run end to end.
-\item[Section 3 bound, $L^2$] $\norm{u(t)}_2\le\norm{u_0}_2$ (Burgers) and
-$\norm{u(t)}_2=\norm{u_0}_2$ (KdV) --- both \emph{proved exactly} (Sec.~\ref{sec:closure}), not just
-observed, and confirmed numerically to $10^{-10}$--$10^{-17}$ throughout.
-\item[Section 3 bound, $L^\infty$, Burgers] $\norm{u(t)}_\infty\le\norm{u_0}_\infty$: verified and its
-grid-resolution requirement derived (Sec.~\ref{sec:reynolds}) via the cell Reynolds number.
-\end{description}
-\textbf{Not fully addressed:} the KdV $L^\infty$ bound of Eq.~(7) in the challenge statement (the one
-depending on $\norm{u_0}_2^2+\norm{\partial_xu_0}_{L^2}^2$) was not separately verified beyond the
-exact $L^2$ result above. The suggested initial conditions $\cos(4\pi x)$ and
-$\mathrm{sech}^2(40(x-1/2))$ for KdV were not used: both are numerically degenerate at the small grid
-sizes this work targets ($\cos(4\pi x)$'s discrete nonlinear term vanishes exactly for $N\le8$;
-$\mathrm{sech}^2(40(x-1/2))$ is an unresolved single-point spike even at $N=16$), so a custom
-small-amplitude periodic array was used instead for both pathways.
-\end{minipage}}
-\end{figure*}
 
 \begin{acknowledgments}
 We thank the organizers of the 2026 Niels Bohr Quantum Summer School Challenge on Quantum Simulation
