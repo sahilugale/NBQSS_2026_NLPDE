@@ -32,6 +32,9 @@ for Ngrid, qb in [(8, 3), (16, 4)]:
 
 print("\n=> alpha/sigma_min tracks the paper's kappa; sigma_max/sigma_min does not.\n")
 
+# NOTE: measured max row nnz is consistently 4 less than "4N+1" (5 vs 9 at
+# N=2, 9 vs 13 at N=3) -- the prediction formula is off by a constant here,
+# not extended/re-derived.
 print("Row sparsity of L (predicted 4N+1):")
 for nx in [5, 7, 9]:
     for N in [2, 3]:

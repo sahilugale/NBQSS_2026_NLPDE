@@ -2,12 +2,10 @@
 
     u_t = F1 u + F2 (u kron u),
 
-used by `kdv.py`. Block assembly, implicit-Euler marching, dense-QSVT and
-Pauli-LCU solves are all PDE-agnostic; subclasses implement only
-`get_Fs()` and `get_init_state()`.
-
-No F0 forcing term (periodic BC, autonomous/homogeneous ODE) -- unlike
-`carleman_qsvt.burgers.Burgers_Carlemann`'s fixed-Dirichlet construction.
+used by `kdv.py` and `periodic_burgers.py`. Block assembly, Crank-Nicolson
+and implicit-Euler marching, dense-QSVT and Pauli-LCU solves are all
+PDE-agnostic; subclasses implement only `get_Fs()` and `get_init_state()`.
+No F0 forcing term (periodic BC, autonomous/homogeneous ODE).
 """
 
 from functools import reduce
@@ -15,7 +13,7 @@ from functools import reduce
 import numpy as np
 from scipy.integrate import solve_ivp
 
-from burgers import next_power_of_two, qsvt_success_probability, solve_linear_system_qsvt
+from qsvt_toolkit import next_power_of_two, qsvt_success_probability, solve_linear_system_qsvt
 from lcu import solve_linear_system_qsvt_lcu
 
 
@@ -128,6 +126,18 @@ class PeriodicCarleman:
         A = self.get_A()
         return np.eye(Dim, dtype=self.DTYPE) - A * self.DT
 
+    def get_crank_nicolson_matrices(self):
+        """Trapezoidal-rule matrices (I - dt/2 A) y_{n+1} = (I + dt/2 A) y_n,
+        O(dt^2) local error vs. implicit Euler's O(dt) -- Costa, Schleich,
+        Morales & Berry, npj Quantum Information 11:141 (2025) motivate
+        higher-order integrators for exactly this kind of Carleman-linearized
+        solve. Same A (and hence same block-encoding norm/qubit count) as
+        implicit Euler; only the coefficient changes."""
+        Dim = self.geometric_series(self.N, self.N_T)
+        A = self.get_A()
+        I = np.eye(Dim, dtype=self.DTYPE)
+        return I - 0.5 * self.DT * A, I + 0.5 * self.DT * A
+
     # --- time marching ---
 
     def get_implicit_solver(self):
@@ -148,10 +158,65 @@ class PeriodicCarleman:
             y_store.append(y_prev[: self.N].copy())
         return y_store, np.array(RMSE_list)
 
+    def get_crank_nicolson_solver(self):
+        """Classical (no QSVT) Crank-Nicolson time march -- same structure as
+        `get_implicit_solver`, for comparing convergence order directly."""
+        y_init = self.get_y_init()
+        n_timesteps = self.get_n_timesteps()
+        LHS, RHS_op = self.get_crank_nicolson_matrices()
+        u = self.get_u_desired()
+
+        y_store = [y_init[: self.N].copy()]
+        RMSE_list = []
+        y_prev = y_init.copy()
+        for i in range(n_timesteps):
+            y_prev = np.linalg.solve(LHS, RHS_op @ y_prev)
+            err = np.sqrt(np.mean((y_prev[: self.N] - u[:, i + 1]) ** 2))
+            RMSE_list.append(err)
+            y_store.append(y_prev[: self.N].copy())
+        return y_store, np.array(RMSE_list)
+
+    def get_crank_nicolson_solver_qsvt(self, phi, s, verbose=True):
+        """QSVT analogue of `get_crank_nicolson_solver`: each linear solve
+        block-encodes LHS = I - dt/2 A instead of implicit Euler's I - dt A;
+        the RHS = (I + dt/2 A) y_prev is a classical matrix-vector product
+        computed before state preparation, no extra quantum cost."""
+        y_init = self.get_y_init()
+        n_timesteps = self.get_n_timesteps()
+        LHS, RHS_op = self.get_crank_nicolson_matrices()
+        u = self.get_u_desired()
+
+        Dim = LHS.shape[0]
+        padded_dim = next_power_of_two(Dim)
+        LHS_padded = np.eye(padded_dim, dtype=self.DTYPE)
+        LHS_padded[:Dim, :Dim] = LHS
+
+        y_store = [y_init[: self.N].copy()]
+        RMSE_list, p_success_list = [], []
+        y_prev = y_init.copy()
+
+        for i in range(n_timesteps):
+            if verbose:
+                print(f"Time step {i+1}/{n_timesteps}")
+            rhs = RHS_op @ y_prev
+            rhs_padded = np.concatenate((rhs, np.zeros(padded_dim - Dim, dtype=self.DTYPE)))
+            rhs_normalized = rhs_padded / np.linalg.norm(rhs_padded, 2)
+
+            p_success_list.append(qsvt_success_probability(LHS_padded, rhs_normalized, s))
+
+            y_prev = solve_linear_system_qsvt(LHS_padded.T, rhs_padded, phi, s)
+            y_prev = y_prev[:Dim].real
+
+            err = np.sqrt(np.mean((y_prev[: self.N] - u[:, i + 1]) ** 2))
+            RMSE_list.append(err)
+            y_store.append(y_prev[: self.N].copy())
+
+        return y_store, np.array(RMSE_list), p_success_list
+
     def get_implicit_solver_qsvt(self, phi, s, verbose=True):
         """Same implicit-Euler time march as `get_implicit_solver`, but each
         A @ y = rhs solve is done via QSVT on a dense block encoding of A
-        (see `burgers.solve_linear_system_qsvt`). Returns the state
+        (see `qsvt_toolkit.solve_linear_system_qsvt`). Returns the state
         history, RMSE against the exact-ODE reference at each step, and the
         QSVT post-selection success probability at each step."""
         y_init = self.get_y_init()
@@ -190,9 +255,7 @@ class PeriodicCarleman:
 
 def get_implicit_solver_qsvt_lcu(carleman, phi, s, tol=1e-10, verbose=True):
     """Pauli-LCU-block-encoding analogue of
-    `PeriodicCarleman.get_implicit_solver_qsvt` (mirrors
-    `lcu.get_implicit_solver_qsvt_lcu`, adapted for the periodic state
-    layout -- no Dirichlet ghost-point concatenation). Works with any
+    `PeriodicCarleman.get_implicit_solver_qsvt`. Works with any
     `PeriodicCarleman` subclass (KdV or periodic Burgers)."""
     y_init = carleman.get_y_init()
     n_timesteps = carleman.get_n_timesteps()
@@ -220,6 +283,44 @@ def get_implicit_solver_qsvt_lcu(carleman, phi, s, tol=1e-10, verbose=True):
         p_success_list.append(qsvt_success_probability(A_padded, rhs_normalized, s))
 
         y_prev = solve_linear_system_qsvt_lcu(A_padded.T, rhs_padded, phi, s, tol=tol)
+        y_prev = y_prev[:Dim].real
+
+        err = np.sqrt(np.mean((y_prev[:N] - u[:, i + 1]) ** 2))
+        RMSE_list.append(err)
+        y_store.append(y_prev[:N].copy())
+
+    return y_store, np.array(RMSE_list), p_success_list
+
+
+def get_crank_nicolson_solver_qsvt_lcu(carleman, phi, s, tol=1e-10, verbose=True):
+    """Pauli-LCU analogue of `PeriodicCarleman.get_crank_nicolson_solver_qsvt`
+    (mirrors `get_implicit_solver_qsvt_lcu` above, LHS/RHS swapped for the
+    trapezoidal rule)."""
+    y_init = carleman.get_y_init()
+    n_timesteps = carleman.get_n_timesteps()
+    LHS, RHS_op = carleman.get_crank_nicolson_matrices()
+    u = carleman.get_u_desired()
+    N = carleman.N
+
+    Dim = LHS.shape[0]
+    padded_dim = next_power_of_two(Dim)
+    LHS_padded = np.eye(padded_dim, dtype=carleman.DTYPE)
+    LHS_padded[:Dim, :Dim] = LHS
+
+    y_store = [y_init[:N].copy()]
+    RMSE_list, p_success_list = [], []
+    y_prev = y_init.copy()
+
+    for i in range(n_timesteps):
+        if verbose:
+            print(f"Time step {i+1}/{n_timesteps}")
+        rhs = RHS_op @ y_prev
+        rhs_padded = np.concatenate((rhs, np.zeros(padded_dim - Dim, dtype=carleman.DTYPE)))
+        rhs_normalized = rhs_padded / np.linalg.norm(rhs_padded, 2)
+
+        p_success_list.append(qsvt_success_probability(LHS_padded, rhs_normalized, s))
+
+        y_prev = solve_linear_system_qsvt_lcu(LHS_padded.T, rhs_padded, phi, s, tol=tol)
         y_prev = y_prev[:Dim].real
 
         err = np.sqrt(np.mean((y_prev[:N] - u[:, i + 1]) ** 2))

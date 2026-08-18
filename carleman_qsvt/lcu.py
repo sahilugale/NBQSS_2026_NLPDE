@@ -1,5 +1,5 @@
 """Linear-Combination-of-Unitaries (LCU) block encoding, alternative to the
-dense/arbitrary block encoding in `burgers.py`. Standard PREPARE / SELECT /
+dense/arbitrary block encoding in `qsvt_toolkit.py`. Standard PREPARE / SELECT /
 PREPARE-dagger construction from A's Pauli decomposition A = sum_k c_k P_k;
 postselecting the ancilla on |0..0> yields A/alpha in the system block
 (alpha = sum_k |c_k|).
@@ -23,7 +23,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit.library import StatePreparation, UnitaryGate
 from qiskit.quantum_info import Operator, Pauli, SparsePauliOp, Statevector
 
-from burgers import _reversed_qubits, projector_phase_matrix
+from qsvt_toolkit import _reversed_qubits, projector_phase_matrix
 
 
 # =============================================================================
@@ -138,59 +138,6 @@ def solve_linear_system_qsvt_lcu(A, rhs, phi, s, tol=1e-10):
     out, alpha = qsvt_apply_state_lcu(A, phi, rhs_normalized, tol=tol)
     out = out[: rhs_normalized.shape[0]].real
     return out * rhs_norm / (s * alpha)
-
-
-def get_implicit_solver_qsvt_lcu(burgers_carlemann, phi, s, tol=1e-10, verbose=True):
-    """LCU-block-encoding analogue of
-    `Burgers_Carlemann.get_implicit_solver_qsvt`: same implicit-Euler time
-    march and the same (matrix-independent) `qsvt_success_probability`
-    diagnostic, but the per-step linear solve uses the LCU block encoding
-    instead of the dense one. Takes a `Burgers_Carlemann` instance (from
-    burgers.py) so the classical PDE/Carleman machinery is reused
-    rather than duplicated.
-    """
-    from burgers import next_power_of_two, qsvt_success_probability
-
-    y_init = burgers_carlemann.get_y_init()
-    n_timesteps = burgers_carlemann.get_n_timesteps()
-    A = burgers_carlemann.get_I_m_Adt()
-    B = burgers_carlemann.get_B()
-    u = burgers_carlemann.get_u_desired()
-
-    Dim = A.shape[0]
-    padded_dim = next_power_of_two(Dim)
-    A_padded = np.eye(padded_dim, dtype=burgers_carlemann.DTYPE)
-    A_padded[:Dim, :Dim] = A
-
-    y_store = []
-    RMSE_list = []
-    p_success_list = []
-
-    t = np.concat(([burgers_carlemann.U0], y_init[:burgers_carlemann.N], [burgers_carlemann.UN1]), dtype=burgers_carlemann.DTYPE)
-    y_prev = y_init.copy()
-    y_store.append(t)
-
-    for i in range(n_timesteps):
-        if verbose:
-            print(f"Time step {i+1}/{n_timesteps}")
-        rhs = y_prev + B*burgers_carlemann.DT
-        rhs_padded = np.concatenate((rhs, np.zeros(padded_dim - Dim, dtype=burgers_carlemann.DTYPE)))
-        rhs_normalized = rhs_padded / np.linalg.norm(rhs_padded, 2)
-
-        p_s = qsvt_success_probability(A_padded, rhs_normalized, s)
-        p_success_list.append(p_s)
-
-        y_prev = solve_linear_system_qsvt_lcu(A_padded.T, rhs_padded, phi, s, tol=tol)
-        y_prev = y_prev[:Dim].real
-
-        t = np.sum((y_prev[:burgers_carlemann.N] - u[1:-1, i+1])**2)
-        t = np.sqrt(t/burgers_carlemann.N)
-        RMSE_list.append(t)
-        t = np.concat(([burgers_carlemann.U0], y_prev[:burgers_carlemann.N], [burgers_carlemann.UN1]), dtype=burgers_carlemann.DTYPE)
-        y_store.append(t)
-
-    RMSE_list = np.array(RMSE_list)
-    return y_store, RMSE_list, p_success_list
 
 
 # =============================================================================

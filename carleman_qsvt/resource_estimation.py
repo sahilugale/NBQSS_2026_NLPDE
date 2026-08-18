@@ -1,12 +1,12 @@
 """Resource comparison between the two QSVT block encodings (dense,
-`burgers.block_encode_matrix`; Pauli-LCU, `lcu.py`) used by the
+`qsvt_toolkit.block_encode_matrix`; Pauli-LCU, `lcu.py`) used by the
 Carleman-linearized Burgers/KdV solves. Builds ONE block-encoding layer as
 a transpiled Qiskit circuit per method, then extrapolates to the full
 QSVT circuit (kappa=8, 560 phase angles) by multiplying out the per-layer
 gate counts, rather than transpiling all 560 layers directly.
 
 `_carleman_matrix` / `_carleman_matrix_kdv` build the Burgers/KdV systems
-(N=5, N_T=2, matching each notebook). `dense_layer_stats` / `lcu_layer_stats`
+(N_T=2, matching each notebook). `dense_layer_stats` / `lcu_layer_stats`
 / `projector_layer_stats` / `extrapolate_total` are matrix-agnostic.
 
 Run as a script: `python resource_estimation.py` (Burgers only).
@@ -18,12 +18,12 @@ import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit.library import PhaseGate, UnitaryGate
 
-from burgers import (
-    Burgers_Carlemann,
+from qsvt_toolkit import (
     block_encode_matrix,
     compute_inverse_qsvt_angles,
     next_power_of_two,
 )
+from periodic_burgers import PeriodicBurgers_Carlemann
 from kdv import KdV_Carlemann
 from lcu import build_lcu_block_encoding_gate_circuit, pauli_lcu_terms
 
@@ -31,10 +31,9 @@ BASIS_GATES = ["cx", "u3"]
 OPTIMIZATION_LEVEL = 1
 
 
-def _carleman_matrix():
-    """The padded implicit-Euler matrix actually block-encoded in the
-    tutorial notebook (N=5, N_T=2, as used throughout)."""
-    bc = Burgers_Carlemann(N=5, N_T=2, total_time=0.3, mu=0.01, dt=0.1, u0=0, uN1=0, stencil="method_2")
+def _carleman_matrix(N=5, N_T=2, total_time=0.3, nu=0.1, dt=0.1, ic="sin"):
+    """The padded Carleman-linearized matrix block-encoded in the notebook."""
+    bc = PeriodicBurgers_Carlemann(N=N, N_T=N_T, total_time=total_time, nu=nu, dt=dt, ic=ic)
     A = bc.get_I_m_Adt()
     Dim = A.shape[0]
     padded_dim = next_power_of_two(Dim)
@@ -44,9 +43,9 @@ def _carleman_matrix():
 
 
 def _carleman_matrix_kdv(N=5, N_T=2, total_time=0.3, delta=0.02, dt=0.1, ic="cos"):
-    """The padded implicit-Euler matrix for the KdV tutorial notebook.
-    delta=0.02 at N=6 sits in the Carleman-convergent window identified by
-    `kdv_convergence_study.py` (linear/nonlinear norm ratio ~4)."""
+    """The padded Carleman-linearized matrix for the KdV tutorial notebook
+    (same sparsity/block-encoding cost regardless of implicit-Euler vs.
+    Crank-Nicolson -- only the scalar coefficients on A differ)."""
     kdv = KdV_Carlemann(N, N_T, total_time, delta, dt, ic=ic)
     A = kdv.get_I_m_Adt()
     Dim = A.shape[0]

@@ -60,6 +60,8 @@ print(f"\n#(value,offset) pairs = {len(pairs)}   (paper: 14 data elements -> 4 d
 print(f"formula 2N(N+1)+N = {2*N*(N+1)+N}")
 
 # ---- subnormalisation alpha = L1 norm of distinct data values ----
+# NOTE: alpha_formula below doesn't match alpha_naive exactly (4.23 vs 4.76
+# at this nx, N) -- close but not exact, formula not fully reconciled.
 alpha_naive = sum(abs(v) for v,_ in pairs)
 print(f"\nalpha (sum |distinct data values|) = {alpha_naive:.4f}")
 lam_diff = nu*dt/dx**2
