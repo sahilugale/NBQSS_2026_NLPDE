@@ -72,7 +72,7 @@ $\|\mathbf u(t)\|_2=\|\mathbf u_0\|_2$ to ~1e-10 for KdV and $\|\mathbf u(t)\|_2
 non-increasing for Burgers at any grid size, matching the challenge exactly. How coarse a grid can be
 while still *visibly* respecting the Burgers bound is set by the cell Reynolds number
 $\mathrm{Re}_\Delta = U\,\Delta x/\nu$ (needs $\mathrm{Re}_\Delta\lesssim2$, i.e. $N\gtrsim\mathrm{Re}/2$)
-— see `report/report.pdf` §II.C for the derivation and the numbers for both notebooks' actual
+— see `prx_quantum/main.pdf` §II D for the derivation and the numbers for both notebooks' actual
 parameters.
 
 Primary reference: A. Setty, *A quantum linear systems pathway for solving differential equations*,
@@ -93,7 +93,7 @@ forward-Euler target for Burgers ($\mathbf u_{\mathrm{rhs}}=\mathbf u_{\mathrm{o
 **KdV uses implicit midpoint** instead
 ($\mathbf u_{\mathrm{rhs}}=(\mathbf u_{\mathrm{old}}+\mathbf u_{\mathrm{new}})/2$, solved classically
 each step and re-encoded via a second ansatz fit): forward Euler provably injects energy into KdV's
-otherwise-conservative ODE on every step (proof in `report/report.pdf` §II.B), which implicit midpoint
+otherwise-conservative ODE on every step (proof in `prx_quantum/main.pdf` §II C), which implicit midpoint
 does not. Every quantity needed — the Fubini-Study metric $M_{kl}$ and the gradient of the cost — is
 measured with a **single Pauli-generator insertion** at one specific gate, or a compute-uncompute
 circuit, rather than controlling the whole ansatz as a Hadamard test would require. Since these
@@ -101,7 +101,7 @@ circuits only give the *magnitude* of each overlap, signs are resolved by `pde_c
 proven Lipschitz-bound certificate (not a heuristic) carries a term's sign forward for free whenever
 no zero-crossing could have occurred on the step just taken, falling back to a classical check only
 when it can't rule one out — this replaced two earlier, unsafe heuristic attempts that silently broke
-on KdV; see `report/report.pdf` §IV.C for the derivation and the two failure modes it fixes. The
+on KdV; see `prx_quantum/main.pdf` §V C for the derivation and the two failure modes it fixes. The
 general approach follows the McLachlan variational principle (McLachlan, *Mol. Phys.* **8**, 39
 (1964); quantum-simulation formulation: Li & Benjamin, *Phys. Rev. X* **7**, 021050 (2017); Yuan et
 al., *Quantum* **3**, 191 (2019)) combined with the standard parameter-shift rule (Mitarai, Negoro,
@@ -138,8 +138,8 @@ per timestep rather than a single expensive one.
 │   ├── pde_core.py                # ansatz, metric, and cross-term circuits; natural_gradient_timestep
 │   ├── Burgers_variational_qiskit.ipynb   # setup, time-propagation, results, resource estimates
 │   └── KdV_variational_qiskit.ipynb       # setup, time-propagation, results, resource estimates
-├── scaling_analysis/              # companion scaling-limitations study (Nadav Carmel)
-│   └── qlsp_burgers.tex/.pdf, scaling.py, kappa.py, verify.py, figs.py
+├── scaling_analysis/              # cost-analysis scripts backing the manuscript's Sec. IV
+│   └── scaling.py, kappa.py, verify.py, figs.py   (Nadav Carmel)
 ├── report/                        # full APS-style writeup (see "Report" below)
 │   └── report.tex/.pdf, fig_*.pdf
 ├── prx_quantum/                   # combined PRX Quantum-style manuscript (see "Report" below)
@@ -154,21 +154,24 @@ per timestep rather than a single expensive one.
 
 ## Report
 
-`report/report.pdf` (source: `report/report.tex`, REVTeX 4-2) is the complete, self-contained
-technical writeup: every discretization choice and algorithmic fix in this repository derived and
-proved from scratch (not just asserted), a full Reynolds-number/resolution analysis, exact resource
-tables (qubits/gates/depth) for every system actually solved, and a scaling study of both pathways'
-circuits obtained by transpiling and counting gates on our own circuits at each size, not by
-evaluating a closed-form asymptotic formula alone. Start there for the full mathematical picture;
-this README is the quick-reference version.
+**`prx_quantum/main.pdf` is the submitted report** (source: `prx_quantum/main.tex`, REVTeX 4-2).
+It is the complete, self-contained writeup: every discretization choice and algorithmic fix derived
+and proved from scratch rather than asserted, a full Reynolds-number/resolution analysis, exact
+resource tables (qubits/gates/depth) for every system actually solved, and a scaling study obtained
+by transpiling and counting gates on our own circuits at each size rather than by evaluating a
+closed-form asymptotic alone.
 
-`prx_quantum/main.pdf` (source: `prx_quantum/main.tex`, REVTeX 4-2) is a second, PRX Quantum-style
-manuscript that combines three sources into one argument: this repository's implementation, the
-companion `scaling_analysis/` cost study, and the analog degenerate-cavity-laser realization of
-Burgers in `references/`. Its organizing question is what the linear embedding a quantum computer
-requires actually costs, and what happens if you decline to pay it — Carleman-QSVT pays, the
-variational method sidesteps it, and the laser platform never digitizes at all. See
-`prx_quantum/README.md` for provenance, the shared figure palette, and open items.
+Its organizing question is what the linear embedding a quantum computer requires actually costs, and
+what happens if you decline to pay it. Three routes are costed end to end against the same two PDEs:
+Carleman-QSVT pays for the embedding, the variational method sidesteps it and runs on present-day
+hardware, and an analog degenerate-cavity laser never digitizes at all. Start there for the full
+picture; this README is the quick-reference version. See `prx_quantum/README.md` for provenance, the
+shared figure palette, and open items.
+
+The asymptotic cost analysis behind the manuscript's Sec. IV — the `Re < π/2` Carleman convergence
+threshold, the block-encoding subnormalization, and the worked instance — is reproduced by the four
+scripts in `scaling_analysis/` (`numpy` and `scipy` only), which also regenerate three of the
+manuscript's figures.
 
 ## Installation
 
@@ -208,12 +211,12 @@ network access needed.
 
 The physics, algorithms, and the great majority of the code in this repository are the team's own:
 the choice of Carleman linearization and QSVT, the variational natural-gradient formulation, the
-discretization, and the fixes described throughout this README and `report/report.pdf` originated
+discretization, and the fixes described throughout this README and `prx_quantum/main.pdf` originated
 with the team. Claude (Anthropic) was used interactively, under the team's direction and review, to
 help implement specific pieces of that design, debug issues the team identified, run numerical
-verification, and draft parts of the `report/` writeup and this README. All physical claims,
+verification, and draft parts of the `prx_quantum/` manuscript and this README. All physical claims,
 discretization choices, and numerical results were independently verified by the team against
-classical reference calculations (documented throughout `report/report.pdf`) rather than accepted on
+classical reference calculations (documented throughout `prx_quantum/main.pdf`) rather than accepted on
 the model's assertion alone; all mathematical proofs were checked step-by-step; all cited literature
 was checked against its original source.
 

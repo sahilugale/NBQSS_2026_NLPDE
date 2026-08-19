@@ -3,12 +3,13 @@
 **The Price of Linearity: Carleman–QSVT, Variational, and Analog Routes to Quantum Simulation of
 Nonlinear Partial Differential Equations**
 
-A single manuscript combining the three independent sources in this repository into one argument,
-written in PRX Quantum style (REVTeX 4.2, numbered sections, popular summary, unlimited length).
+The submitted report. A single manuscript combining three independent strands of the project into
+one argument, written in PRX Quantum style (REVTeX 4.2, numbered sections, popular summary,
+unlimited length).
 
 ```bash
 export PATH=/usr/local/texlive/2026/bin/x86_64-linux:$PATH
-pdflatex main.tex && pdflatex main.tex     # 14 pages, compiles clean
+pdflatex main.tex && pdflatex main.tex     # 15 pages, compiles clean
 ```
 
 ## The combining idea
@@ -19,12 +20,17 @@ that question rather than around the sources:
 > A quantum computer evolves states linearly. A nonlinear PDE must therefore be embedded in a linear
 > problem first. **What does that embedding cost, and what happens if you decline to pay it?**
 
-| Section | Source | Role in the argument |
+This manuscript supersedes two earlier standalone writeups, which are no longer tracked but remain
+in git history: the team's APS-style implementation report (`report/`) and the companion
+asymptotic cost study (`scaling_analysis/qlsp_burgers.tex`). Their content is absorbed here; the
+scripts backing the latter stay tracked in `scaling_analysis/`.
+
+| Section | Origin | Role in the argument |
 |---|---|---|
-| §II Shared problem | `report/` | The proofs both digital routes depend on (conservative closure, forward-Euler energy injection, Reynolds resolution) |
-| §III Route 1, as built | `report/` | Carleman–QSVT **measured**: circuits built, transpiled, verified |
-| §IV What Route 1 costs | `scaling_analysis/` | Carleman–QSVT **projected**: error budget, Re < π/2 threshold, 10¹² gates |
-| §V Route 2 | `report/` | Variational: declines the embedding, runs on present hardware |
+| §II Shared problem | implementation report | The proofs both digital routes depend on (conservative closure, forward-Euler energy injection, Reynolds resolution) |
+| §III Route 1, as built | implementation report | Carleman–QSVT **measured**: circuits built, transpiled, verified |
+| §IV What Route 1 costs | cost study, `scaling_analysis/*.py` | Carleman–QSVT **projected**: error budget, Re < π/2 threshold, 10¹² gates |
+| §V Route 2 | implementation report | Variational: declines the embedding, runs on present hardware |
 | §VI Route 3 | `references/Niels_Bohr_Student_Challenge.pdf` | DDCL analog: declines the digital circuit |
 | §VII Comparison | all three | Where each route's cost actually sits |
 
@@ -54,8 +60,7 @@ Two threads tie the sources together and are not present in any one of them alon
   substyle in this installation, and PRX Quantum shares PRX formatting. Flagged in a comment at the
   top of `main.tex`. Verify against current PRX Quantum author guidelines before submission,
   along with the popular-summary length limit.
-- **`Nadav's home institution`** is still a placeholder in the author block, inherited from
-  `report/report.tex`.
+- **`Nadav's home institution`** is still a placeholder in the author block.
 - **The DDCL section claims only what the source supports**: the platform, the mapping derivation,
   and the stationary `tanh` profile as the accessible observable. §VI C states plainly that no
   time-resolved analog trajectory is presented, that the phase-only reduction has stated validity

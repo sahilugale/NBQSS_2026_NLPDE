@@ -39,3 +39,10 @@ Thumbs.db
 # Working material, not a deliverable: scratch screenshots kept locally for
 # reference but not part of what is submitted.
 picture_maybe_useful/
+
+# Superseded by prx_quantum/, which is the submitted manuscript. Both are kept
+# locally and remain in git history; scaling_analysis/*.py stays tracked because
+# it is what makes the manuscript's Sec. IV numbers reproducible.
+report/
+scaling_analysis/qlsp_burgers.*
+scaling_analysis/fig_*.pdf
