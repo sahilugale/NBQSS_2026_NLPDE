@@ -2,6 +2,7 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{DDCL2026}
 \newlabel{FirstPage}{{}{1}{}{section*.1}{}}
 \@writefile{toc}{\contentsline {title}{Quantum Simulation of the Burgers and Korteweg--de Vries Equations:\\ Carleman--QSVT Linear-System Solving and Variational Natural-Gradient Time Propagation}{1}{section*.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {abstract}{Abstract}{1}{section*.1}\protected@file@percent }
@@ -13,35 +14,35 @@
 \@writefile{toc}{\contentsline {section}{\numberline {II}Shared discretization and its exact conservation identity}{2}{section*.4}\protected@file@percent }
 \newlabel{sec:discretization}{{II}{2}{}{section*.4}{}}
 \newlabel{eq:quadratic-ode}{{6}{2}{}{equation.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A}The convective closure must be chosen with care}{2}{section*.5}\protected@file@percent }
-\newlabel{sec:closure}{{II\,A}{2}{}{section*.5}{}}
 \citation{Setty2026}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A}The convective closure must be chosen with care}{3}{section*.5}\protected@file@percent }
+\newlabel{sec:closure}{{II\,A}{3}{}{section*.5}{}}
 \newlabel{eq:f2skew}{{7}{3}{}{equation.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Reynolds number $\mathrm  {Re}=U/\nu $ and cell Reynolds number $\mathrm  {Re}_\Delta =U\Delta x/\nu $, Burgers systems used in this work ($L=1$).}}{3}{table.1}\protected@file@percent }
+\newlabel{tab:reynolds}{{I}{3}{Reynolds number $\mathrm {Re}=U/\nu $ and cell Reynolds number $\mathrm {Re}_\Delta =U\Delta x/\nu $, Burgers systems used in this work ($L=1$)}{table.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {B}A subtlety: exact conservation of the ODE does not survive time discretization}{3}{section*.6}\protected@file@percent }
 \newlabel{sec:forward-euler-injects-energy}{{II\,B}{3}{}{section*.6}{}}
 \newlabel{eq:euler-injects-energy}{{9}{3}{}{equation.9}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Reynolds number $\mathrm  {Re}=U/\nu $ and cell Reynolds number $\mathrm  {Re}_\Delta =U\Delta x/\nu $, Burgers systems used in this work ($L=1$).}}{3}{table.1}\protected@file@percent }
-\newlabel{tab:reynolds}{{I}{3}{Reynolds number $\mathrm {Re}=U/\nu $ and cell Reynolds number $\mathrm {Re}_\Delta =U\Delta x/\nu $, Burgers systems used in this work ($L=1$)}{table.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {C}The Reynolds number sets the grid resolution both methods need}{3}{section*.7}\protected@file@percent }
 \newlabel{sec:reynolds}{{II\,C}{3}{}{section*.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {III}Method A: Carleman linearization and QSVT}{3}{section*.8}\protected@file@percent }
-\newlabel{sec:carleman}{{III}{3}{}{section*.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A}Carleman lifting}{3}{section*.9}\protected@file@percent }
-\newlabel{eq:carleman}{{10}{3}{}{equation.10}{}}
 \citation{Liu2021}
 \citation{LeVeque2007}
 \citation{Costa2025}
 \citation{Gilyen2019}
 \citation{Gilyen2019}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Method A: Carleman linearization and QSVT}{4}{section*.8}\protected@file@percent }
+\newlabel{sec:carleman}{{III}{4}{}{section*.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A}Carleman lifting}{4}{section*.9}\protected@file@percent }
+\newlabel{eq:carleman}{{10}{4}{}{equation.10}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {B}Time marching}{4}{section*.10}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {C}Block encoding: dense and Pauli-LCU}{4}{section*.11}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Carleman--QSVT systems solved ($N_T=2$, $\Delta t=0.1$, $t\in [0,0.3]$).}}{4}{table.2}\protected@file@percent }
-\newlabel{tab:carleman}{{II}{4}{Carleman--QSVT systems solved ($N_T=2$, $\Delta t=0.1$, $t\in [0,0.3]$)}{table.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {D}QSVT matrix inversion}{4}{section*.12}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {E}Verification and results}{4}{section*.13}\protected@file@percent }
 \citation{Setty2026}
 \citation{McLachlan1964,Li2017,Yuan2019}
 \citation{Yuan2019}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Carleman--QSVT systems solved ($N_T=2$, $\Delta t=0.1$, $t\in [0,0.3]$).}}{5}{table.2}\protected@file@percent }
+\newlabel{tab:carleman}{{II}{5}{Carleman--QSVT systems solved ($N_T=2$, $\Delta t=0.1$, $t\in [0,0.3]$)}{table.2}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Exact extrapolated full-QSVT-circuit resource cost, one matrix inversion, $\kappa =8$ (561 phase angles).}}{5}{table.3}\protected@file@percent }
 \newlabel{tab:carleman-resources}{{III}{5}{Exact extrapolated full-QSVT-circuit resource cost, one matrix inversion, $\kappa =8$ (561 phase angles)}{table.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {F}What limits the achievable grid size: condition number, not only gate count}{5}{section*.14}\protected@file@percent }
@@ -52,14 +53,14 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {B}The McLachlan variational principle as a discrete-target fit}{5}{section*.17}\protected@file@percent }
 \newlabel{eq:cost}{{14}{5}{}{equation.14}{}}
 \newlabel{eq:ngd}{{15}{5}{}{equation.15}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C}Circuit-level measurement}{5}{section*.18}\protected@file@percent }
-\newlabel{sec:circuit-measurement}{{IV\,C}{5}{}{section*.18}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Burgers wave propagation, Carleman--QSVT: classical (dashed) vs.\ dense QSVT (solid) vs.\ Pauli-LCU QSVT (dotted).}}{6}{figure.1}\protected@file@percent }
 \newlabel{fig:carleman-burgers}{{1}{6}{Burgers wave propagation, Carleman--QSVT: classical (dashed) vs.\ dense QSVT (solid) vs.\^^MPauli-LCU QSVT (dotted)}{figure.1}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Burgers: RMSE, QSVT success probability, and fidelity per timestep, dense vs.\ Pauli-LCU encoding.}}{6}{figure.2}\protected@file@percent }
 \newlabel{fig:carleman-time}{{2}{6}{Burgers: RMSE, QSVT success probability, and fidelity per timestep, dense vs.\ Pauli-LCU encoding}{figure.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Classical space--time diagram of the Burgers reference solution used above (fine sub-stepped forward Euler, for visualization only).}}{6}{figure.3}\protected@file@percent }
 \newlabel{fig:carpet}{{3}{6}{Classical space--time diagram of the Burgers reference solution used above (fine sub-stepped forward Euler, for visualization only)}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {C}Circuit-level measurement}{6}{section*.18}\protected@file@percent }
+\newlabel{sec:circuit-measurement}{{IV\,C}{6}{}{section*.18}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces General circuit primitives: (a) one repetition of the $R_y$/CNOT ansatz layer, applied $n$ times in total; (b) the ancilla-free cyclic shift gate $S$ ($n=3$; the staircase of $(n{-}1{-}k)$-controlled $X$'s targeting qubit $k$, $k=n{-}1,\dots  ,1$, then $X$ on qubit $0$, extends to any $n$); (c) the single-ancilla metric off-diagonal circuit, generator insertions $Y_k,Y_l$ between sub-unitaries $U_{\rm  bef},U_{\rm  mid},U_{\rm  aft}$ of the ansatz; (d) the two-register nonlinear cross-term circuit, $n$-qubit registers $A,B$, no controlled-ansatz gates anywhere.}}{6}{figure.4}\protected@file@percent }
 \newlabel{fig:circuits}{{4}{6}{General circuit primitives: (a) one repetition of the $R_y$/CNOT ansatz layer, applied $n$ times in total; (b) the ancilla-free cyclic shift gate $S$ ($n=3$; the staircase of $(n{-}1{-}k)$-controlled $X$'s targeting qubit $k$, $k=n{-}1,\dots ,1$, then $X$ on qubit $0$, extends to any $n$); (c) the single-ancilla metric off-diagonal circuit, generator insertions $Y_k,Y_l$ between sub-unitaries $U_{\rm bef},U_{\rm mid},U_{\rm aft}$ of the ansatz; (d) the two-register nonlinear cross-term circuit, $n$-qubit registers $A,B$, no controlled-ansatz gates anywhere}{figure.4}{}}
 \newlabel{eq:paramshift}{{16}{7}{}{equation.16}{}}
@@ -68,24 +69,23 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {E}Implicit midpoint for KdV}{7}{section*.20}\protected@file@percent }
 \newlabel{sec:implicit-midpoint}{{IV\,E}{7}{}{section*.20}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {F}Verification and results}{7}{section*.21}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {V}Resource scaling}{7}{section*.22}\protected@file@percent }
-\newlabel{sec:scaling}{{V}{7}{}{section*.22}{}}
 \citation{Shende2006}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Burgers wave propagation, classical (dashed) vs.\ ideal quantum (solid, matches to $\sim 10^{-6}$) vs.\ noisy hardware readout (dotted).}}{8}{figure.5}\protected@file@percent }
-\newlabel{fig:burgers-var}{{5}{8}{Burgers wave propagation, classical (dashed) vs.\ ideal quantum (solid, matches to $\sim 10^{-6}$) vs.\ noisy hardware readout (dotted)}{figure.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces KdV wave propagation with the implicit-midpoint target of Sec.~\ref {sec:implicit-midpoint}; $\lVert u \rVert _2$ is conserved to $10^{-10}$ classically and matched to $\sim 10^{-7}$ by the quantum fit.}}{8}{figure.6}\protected@file@percent }
-\newlabel{fig:kdv-var}{{6}{8}{KdV wave propagation with the implicit-midpoint target of Sec.~\ref {sec:implicit-midpoint}; $\norm {u}_2$ is conserved to $10^{-10}$ classically and matched to $\sim 10^{-7}$ by the quantum fit}{figure.6}{}}
+\citation{Setty2026}
 \@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Variational natural-gradient systems solved ($\Delta t=0.1$, $n_{\rm  iter}=150$).}}{8}{table.4}\protected@file@percent }
 \newlabel{tab:variational}{{IV}{8}{Variational natural-gradient systems solved ($\Delta t=0.1$, $n_{\rm iter}=150$)}{table.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Exact transpiled cost of each circuit primitive (Fig.~\ref {fig:circuits}), one instance, $\{\mathrm  {cx},u_3\}$ basis.}}{8}{table.5}\protected@file@percent }
 \newlabel{tab:variational-resources}{{V}{8}{Exact transpiled cost of each circuit primitive (Fig.~\ref {fig:circuits}), one instance, $\{\mathrm {cx},u_3\}$ basis}{table.5}{}}
-\citation{Setty2026}
-\newlabel{eq:sparse-depth}{{17}{9}{}{equation.17}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Discussion}{9}{section*.23}\protected@file@percent }
-\newlabel{sec:discussion}{{VI}{9}{}{section*.23}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Resource scaling}{8}{section*.22}\protected@file@percent }
+\newlabel{sec:scaling}{{V}{8}{}{section*.22}{}}
+\newlabel{eq:sparse-depth}{{17}{8}{}{equation.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Discussion}{8}{section*.23}\protected@file@percent }
+\newlabel{sec:discussion}{{VI}{8}{}{section*.23}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Burgers wave propagation, classical (dashed) vs.\ ideal quantum (solid, matches to $\sim 10^{-6}$) vs.\ noisy hardware readout (dotted).}}{9}{figure.5}\protected@file@percent }
+\newlabel{fig:burgers-var}{{5}{9}{Burgers wave propagation, classical (dashed) vs.\ ideal quantum (solid, matches to $\sim 10^{-6}$) vs.\ noisy hardware readout (dotted)}{figure.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces KdV wave propagation with the implicit-midpoint target of Sec.~\ref {sec:implicit-midpoint}; $\lVert u \rVert _2$ is conserved to $10^{-10}$ classically and matched to $\sim 10^{-7}$ by the quantum fit.}}{9}{figure.6}\protected@file@percent }
+\newlabel{fig:kdv-var}{{6}{9}{KdV wave propagation with the implicit-midpoint target of Sec.~\ref {sec:implicit-midpoint}; $\norm {u}_2$ is conserved to $10^{-10}$ classically and matched to $\sim 10^{-7}$ by the quantum fit}{figure.6}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{9}{section*.24}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {}Acknowledgments}{9}{section*.25}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {}AI disclosure}{9}{section*.26}\protected@file@percent }
 \bibcite{Setty2026}{{1}{}{{}}{{}}}
 \bibcite{Liu2021}{{2}{}{{}}{{}}}
 \bibcite{Gilyen2019}{{3}{}{{}}{{}}}
@@ -101,12 +101,14 @@
 \bibcite{Fornberg1988}{{13}{}{{}}{{}}}
 \bibcite{LeVeque2007}{{14}{}{{}}{{}}}
 \bibcite{LeVeque2002}{{15}{}{{}}{{}}}
+\bibcite{DDCL2026}{{16}{}{{}}{{}}}
 \bibdata{reportNotes}
 \bibstyle{apsrev4-2}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
 \@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Measured asymptotic scaling, this implementation ($n$=qubits, $N=2^n$).}}{10}{table.6}\protected@file@percent }
 \newlabel{tab:bigo}{{VI}{10}{Measured asymptotic scaling, this implementation ($n$=qubits, $N=2^n$)}{table.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {}AI disclosure}{10}{section*.26}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {}References}{10}{section*.27}\protected@file@percent }
-\newlabel{LastBibItem}{{15}{10}{}{section*.27}{}}
+\newlabel{LastBibItem}{{16}{10}{}{section*.27}{}}
 \newlabel{LastPage}{{}{10}{}{}{}}
 \gdef \@abspage@last{10}

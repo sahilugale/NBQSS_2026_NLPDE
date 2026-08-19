@@ -13,10 +13,10 @@ Implementation for the **2026 Niels Bohr Quantum Summer School (NBQSS) Challenge
 This repository solves two nonlinear PDEs — the viscous Burgers equation and the Korteweg-de Vries
 (KdV) equation — with periodic boundary conditions, using **two independent quantum algorithms**:
 
-```
-u_t + u u_x = nu * u_xx              (Burgers)
-u_t + u u_x + delta * u_xxx = 0      (KdV)
-```
+$$
+\partial_t u + u\,\partial_x u = \nu\,\partial_{xx} u \qquad\text{(Burgers)}, \qquad
+\partial_t u + u\,\partial_x u + \delta\,\partial_{xxx} u = 0 \qquad\text{(KdV)}.
+$$
 
 1. **Carleman linearization + QSVT** (`carleman_qsvt/`) — lift the discretized quadratic ODE into a
    truncated linear system, solve it with a QSVT-based quantum linear solver, using two different
@@ -31,19 +31,20 @@ u_t + u u_x + delta * u_xxx = 0      (KdV)
 Crank-Nicolson → linear system → QSVT.**
 
 After spatial discretization, both PDEs take the quadratic form
-`u_dot = F1 u + F2 (u kron u)`, periodic BC as required by the
+$\dot{\mathbf u} = F_1\mathbf u + F_2(\mathbf u\otimes\mathbf u)$, periodic BC as required by the
 challenge (`carleman_qsvt/periodic_burgers.py`, `carleman_qsvt/kdv.py`, both built on the shared
 `periodic_carleman.py` base, which also hosts `qsvt_toolkit.py`'s PDE-agnostic QSVT block-encoding
 toolkit). Carleman linearization introduces the lifted state
 
-```
-y = [u, u kron u, ..., u^(kron N_T)]^T,   y_dot = A y + b,
-```
+$$
+\mathbf y=\begin{bmatrix}\mathbf u\\ \mathbf u^{\otimes2}\\ \vdots\\ \mathbf u^{\otimes N_T}\end{bmatrix},
+\qquad \dot{\mathbf y}=A\mathbf y+\mathbf b,
+$$
 
 and each timestep is a linear solve, approximated on a quantum computer via QSVT applied to a block
-encoding of `A` — time-marched with Crank-Nicolson (trapezoidal rule),
-`(I - dt/2 * A) y_{n+1} = (I + dt/2 * A) y_n`, not implicit Euler:
-same block-encoded matrix, but `O(dt^2)` local error instead of `O(dt)` -- checked
+encoding of $A$ — time-marched with Crank-Nicolson (trapezoidal rule),
+$(I-\frac{\Delta t}{2}A)\mathbf y_{n+1} = (I+\frac{\Delta t}{2}A)\mathbf y_n$, not implicit Euler:
+same block-encoded matrix, but $O(\Delta t^2)$ local error instead of $O(\Delta t)$ -- checked
 classically, needs ~20x fewer timesteps for the same accuracy (motivated by Costa, Schleich,
 Morales & Berry, npj Quantum Information 11:141 (2025)). Two block encodings are implemented and
 compared: a dense/arbitrary-unitary one, and one built
@@ -54,23 +55,25 @@ computational basis).
 
 KdV's dispersion operator is skew-symmetric (non-dissipative), unlike Burgers' diffusion operator,
 so the convergence guarantees Carleman linearization normally relies on don't transfer
-automatically. Checked directly in the notebook: truncation order `N_T` isn't what limits accuracy
-here (N_T=2 vs. 3 give near-identical RMSE) -- dispersion stiffness (`delta/dx^3`) at fixed `dt`
-is, which is why `delta` is chosen fairly small.
+automatically. Checked directly in the notebook: truncation order $N_T$ isn't what limits accuracy
+here ($N_T=2$ vs. $3$ give near-identical RMSE) -- dispersion stiffness ($\delta/dx^3$) at fixed
+$\Delta t$ is, which is why $\delta$ is chosen fairly small.
 
 **Satisfying the challenge's Section 3 norm bounds.** The plain central-difference discretization of
-the convection term doesn't conserve the semi-discrete L2 norm (`u^T F2(u kron u) != 0` in general —
-verified with a random vector, not just special symmetric inputs), so a naive KdV solution's
-`||u(t)||_2` drifted ~11% even though the PDE conserves it exactly, and a naive Burgers solution's
-`||u(t)||_2` could grow at coarse grid resolution even though diffusion should make it non-increasing.
-Both are fixed with the same standard skew-symmetric ("conservative") form of the convective term
-(`discretization.construct_F2_periodic_skew`, proved and verified to `u^T F2(u kron u) = 0` at
-~1e-17), used by both Carleman classes' `get_Fs()` and by both variational notebooks' classical
-reference. Now `||u(t)||_2 = ||u0||_2` to ~1e-10 for KdV and `||u(t)||_2` is provably non-increasing
-for Burgers at any grid size, matching the challenge exactly. How coarse a grid can be while still
-*visibly* respecting the Burgers bound is set by the cell Reynolds number
-`Re_delta = U*dx/nu` (needs `Re_delta ≲ 2`, i.e. `N ≳ Re/2`) — see `report/report.pdf` §II.C for the
-derivation and the numbers for both notebooks' actual parameters.
+the convection term doesn't conserve the semi-discrete $L^2$ norm ($\mathbf u^T F_2(\mathbf
+u\otimes\mathbf u)\neq0$ in general — verified with a random vector, not just special symmetric
+inputs), so a naive KdV solution's $\|\mathbf u(t)\|_2$ drifted ~11% even though the PDE conserves it
+exactly, and a naive Burgers solution's $\|\mathbf u(t)\|_2$ could grow at coarse grid resolution even
+though diffusion should make it non-increasing. Both are fixed with the same standard skew-symmetric
+("conservative") form of the convective term (`discretization.construct_F2_periodic_skew`, proved and
+verified to $\mathbf u^T F_2(\mathbf u\otimes\mathbf u)=0$ at ~1e-17), used by both Carleman classes'
+`get_Fs()` and by both variational notebooks' classical reference. Now
+$\|\mathbf u(t)\|_2=\|\mathbf u_0\|_2$ to ~1e-10 for KdV and $\|\mathbf u(t)\|_2$ is provably
+non-increasing for Burgers at any grid size, matching the challenge exactly. How coarse a grid can be
+while still *visibly* respecting the Burgers bound is set by the cell Reynolds number
+$\mathrm{Re}_\Delta = U\,\Delta x/\nu$ (needs $\mathrm{Re}_\Delta\lesssim2$, i.e. $N\gtrsim\mathrm{Re}/2$)
+— see `report/report.pdf` §II.C for the derivation and the numbers for both notebooks' actual
+parameters.
 
 Primary reference: A. Setty, *A quantum linear systems pathway for solving differential equations*,
 J. Phys. A **59**, 185303 (2026); J.-P. Liu et al., *Efficient quantum algorithm for dissipative
@@ -82,16 +85,16 @@ nonlinear differential equations*, PNAS **118**, e2026805118 (2021).
 descent on a parametrized circuit, one timestep at a time.**
 
 Instead of an enlarged linear embedding, the field is amplitude-encoded directly into a
-parametrized circuit, `amp_t * |psi(theta_t)>`. Each timestep minimizes
-`||amp * psi(theta) - u_target||^2` via natural-gradient descent
+parametrized circuit, $\mathrm{amp}_t\,|\psi(\vec\theta_t)\rangle$. Each timestep minimizes
+$\|\mathrm{amp}\cdot\psi(\vec\theta) - \mathbf u_{\mathrm{target}}\|^2$ via natural-gradient descent
 with a backtracking line search, where
-`u_target = u_old + dt * F(u_rhs)` is the
-forward-Euler target for Burgers (`u_rhs = u_old`), but for
+$\mathbf u_{\mathrm{target}} = \mathbf u_{\mathrm{old}} + \Delta t\,F(\mathbf u_{\mathrm{rhs}})$ is the
+forward-Euler target for Burgers ($\mathbf u_{\mathrm{rhs}}=\mathbf u_{\mathrm{old}}$), but for
 **KdV uses implicit midpoint** instead
-(`u_rhs = (u_old + u_new)/2`, solved classically
+($\mathbf u_{\mathrm{rhs}}=(\mathbf u_{\mathrm{old}}+\mathbf u_{\mathrm{new}})/2$, solved classically
 each step and re-encoded via a second ansatz fit): forward Euler provably injects energy into KdV's
 otherwise-conservative ODE on every step (proof in `report/report.pdf` §II.B), which implicit midpoint
-does not. Every quantity needed — the Fubini-Study metric `M_kl` and the gradient of the cost — is
+does not. Every quantity needed — the Fubini-Study metric $M_{kl}$ and the gradient of the cost — is
 measured with a **single Pauli-generator insertion** at one specific gate, or a compute-uncompute
 circuit, rather than controlling the whole ansatz as a Hadamard test would require. Since these
 circuits only give the *magnitude* of each overlap, signs are resolved by `pde_core.SignTracker`: a

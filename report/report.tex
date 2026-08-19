@@ -115,6 +115,16 @@ work (Sec.~\ref{sec:closure}). Both bounds are explicit requirements of the NBQS
 both are the physical quantities we designed our discretizations around, rather than treating them as
 optional sanity checks.
 
+Burgers dynamics are not merely a textbook model equation: they also arise directly as the continuum
+limit of a real physical system. A Digital Degenerate Cavity Laser (DDCL) --- a self-imaging optical
+resonator whose spatially separated laser sites are coupled with a programmable complex phase via an
+intracavity spatial light modulator --- realizes an array of Sakaguchi--Kuramoto phase oscillators;
+in the long-wavelength continuum limit and phase-only regime, the site-phase gradient obeys exactly
+the one-dimensional viscous Burgers equation, with the effective viscosity set by the real part of the
+optical coupling and advection by its imaginary part \cite{DDCL2026}. This gives an independent,
+non-quantum experimental realization of the same PDE we solve quantum-mechanically below, and
+underlines that Burgers dynamics are physically generic rather than an arbitrary choice of benchmark.
+
 The challenge further requires an amplitude-encoding oracle, which forces the number of spatial grid
 points to be a power of two, $N=2^n$, so that the field $u\in\R^N$ can be represented in the
 amplitudes of an $n$-qubit register.
@@ -827,6 +837,9 @@ Differential Equations} (SIAM, Philadelphia, 2007).
 
 \bibitem{LeVeque2002} R.~J.~LeVeque, \emph{Finite Volume Methods for Hyperbolic Problems} (Cambridge
 University Press, Cambridge, 2002).
+
+\bibitem{DDCL2026} Niels Bohr Quantum Summer School 2026, ``Analog Simulation of Burgers Dynamics in a
+Digital Degenerate Cavity Laser,'' Center for Quantum Mathematics, University of Southern Denmark.
 
 \end{thebibliography}
 
