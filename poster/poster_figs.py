@@ -249,7 +249,8 @@ def _icon_group(icon_fn, x, y, size, color):
     return f'<g transform="translate({x},{y}) scale({scale})">{inner}</g>'
 
 
-def fig_lane_pipeline(color, boxes, W=980, box_h=118, arrow_gap=46, ann_gap=40):
+def fig_lane_pipeline(color, boxes, W=980, box_h=118, arrow_gap=46,
+                       title_fs=35, sub_px=27, ann_px=26):
     """One route's mechanism as boxes + arrows, not prose.
 
     `boxes` is a list of (title, subtitle_latex_or_None, annotation_latex_or_None,
@@ -266,9 +267,9 @@ def fig_lane_pipeline(color, boxes, W=980, box_h=118, arrow_gap=46, ann_gap=40):
     Same node names and cost annotations as the manuscript's Fig. 1 pipeline
     diagram, redrawn at poster scale so a reader a metre away can follow the
     mechanism without the paper in hand. Layout runs top to bottom with a
-    single cursor `y`: each box, then (if present) its annotation directly
-    beneath it, then an arrow spanning only the remaining gap to the next box
-    -- so the arrowhead never lands on text.
+    single cursor `y`: each box (title plus, if present, its subtitle or
+    annotation as a second line inside the same box), then an arrow to the
+    next box -- nothing but the arrow sits between boxes.
     """
     from mathsvg import mathsvg_image
 
@@ -284,53 +285,117 @@ def fig_lane_pipeline(color, boxes, W=980, box_h=118, arrow_gap=46, ann_gap=40):
         title, sub_latex, ann_latex, ann_label, ann_color = box[:5]
         icon_fn = box[5] if len(box) > 5 else None
         title = esc(title)
+        cy_box = y + box_h / 2
         parts.append(f'<rect x="20" y="{y}" width="{W-40}" height="{box_h}" rx="10" '
                      f'fill="#ffffff" stroke="{color}" stroke-width="4"/>')
-        bxr = 24
-        parts.append(f'<circle cx="{20+14+bxr}" cy="{y+14+bxr}" r="{bxr}" fill="{color}"/>')
-        parts.append(f'<text x="{20+14+bxr}" y="{y+14+bxr+9:.1f}" text-anchor="middle" '
-                     f'font-size="24" font-weight="700" fill="#ffffff" '
-                     f'font-family={FM!r}>{i+1}</text>')
+
+        # Icon sits on the right, sized as a fraction of the box's own
+        # height so it always fits regardless of box_h.
+        right_edge = W - 20 - 18
         if icon_fn:
-            isz = 46
-            parts.append(_icon_group(icon_fn, W-40-14-isz, y+14, isz, color))
-        ty = y + (box_h * 0.40 if sub_latex else box_h * 0.58)
-        parts.append(f'<text x="{cx}" y="{ty:.1f}" text-anchor="middle" font-size="35" '
+            isz = round(box_h * 0.66)
+            icon_x = right_edge - isz
+            icon_y = y + (box_h - isz) / 2
+            parts.append(_icon_group(icon_fn, icon_x, icon_y, isz, color))
+            zone_right = icon_x - 28
+        else:
+            zone_right = right_edge
+
+        badge_scale = min(1.4, box_h / 118)
+        bxr = round(20 * badge_scale)
+        bfs = round(20 * badge_scale)
+        bx = 20 + 14 + bxr
+        by = y + 14 + bxr
+        parts.append(f'<circle cx="{bx}" cy="{by}" r="{bxr}" fill="{color}"/>')
+        parts.append(f'<text x="{bx}" y="{by+bfs*0.36:.1f}" text-anchor="middle" '
+                     f'font-size="{bfs}" font-weight="700" fill="#ffffff" '
+                     f'font-family={FM!r}>{i+1}</text>')
+        zone_left = 20 + 14 + 2 * bxr + 20
+
+        # Title and its detail (subtitle or cost annotation) read as one
+        # continuous line -- not two separately anchored blocks -- centred
+        # as a single group in the space between the badge and the icon.
+        # There's no way to measure real rendered text width without a
+        # browser, so both this and the label below estimate it from
+        # character count at the font's typical advance width. If that
+        # estimate says the pair won't fit the available zone, both fonts
+        # are scaled down together until it does -- a fixed centring
+        # formula on an unfitted estimate is exactly what let long titles
+        # ("Natural-gradient descent" + its annotation) overflow past the
+        # box's own left edge.
+        ac = ann_color or C_MUTED
+        gap = 34
+        zone_w = max(40, zone_right - zone_left)
+
+        def measure(t_fs, d_px):
+            t_w = len(title) * t_fs * 0.56
+            d_w = 0
+            if sub_latex:
+                _, d_w, _ = mathsvg_image(sub_latex, 0, 0, px=d_px, anchor="start")
+            elif ann_latex:
+                _, d_w, _ = mathsvg_image(ann_latex, 0, 0, px=d_px, anchor="start")
+                if ann_label:
+                    d_w += 14 + len(f"— {ann_label}") * d_px * 0.52
+            elif ann_label:
+                d_w = len(f"— {ann_label}") * d_px * 0.52
+            return t_w, d_w
+
+        title_fs_eff = round(title_fs * max(0.82, badge_scale))
+        detail_px_eff = ann_px if (ann_latex or ann_label) else sub_px
+        t_w, d_w = measure(title_fs_eff, detail_px_eff)
+        total_w = t_w + (gap + d_w if d_w else 0)
+        # Width scales roughly but not exactly linearly with font size (the
+        # label-count estimate and the rendered-math width don't shrink at
+        # quite the same rate), so one scale pass can undershoot -- iterate
+        # a couple of times, each with a small safety margin, until it
+        # actually fits rather than trusting a single linear correction.
+        for _ in range(3):
+            if total_w <= zone_w:
+                break
+            scale = max(0.5, (zone_w / total_w) * 0.95)
+            title_fs_eff = max(15, round(title_fs_eff * scale))
+            detail_px_eff = max(13, round(detail_px_eff * scale))
+            t_w, d_w = measure(title_fs_eff, detail_px_eff)
+            total_w = t_w + (gap + d_w if d_w else 0)
+
+        start_x = max(zone_left, (zone_left + zone_right) / 2 - total_w / 2)
+
+        parts.append(f'<text x="{start_x:.1f}" y="{cy_box+title_fs_eff*0.34:.1f}" '
+                     f'text-anchor="start" font-size="{title_fs_eff}" '
                      f'font-weight="600" fill="{C_INK}">{title}</text>')
+        detail_x = start_x + t_w + gap
+
         if sub_latex:
-            img, _, _ = mathsvg_image(sub_latex, cx, y + box_h * 0.74, px=27, color=C_MUTED)
+            img, _, _ = mathsvg_image(sub_latex, detail_x, cy_box, px=detail_px_eff,
+                                      color=C_MUTED, anchor="start")
             parts.append(img)
+        elif ann_latex and ann_label:
+            img, w, h = mathsvg_image(ann_latex, detail_x, cy_box, px=detail_px_eff,
+                                      color=ac, anchor="start")
+            parts.append(img)
+            label = esc(f"— {ann_label}")
+            parts.append(f'<text x="{detail_x+w+14:.1f}" y="{cy_box+detail_px_eff*0.32:.1f}" '
+                         f'text-anchor="start" font-size="{detail_px_eff}" '
+                         f'font-style="italic" fill="{ac}">{label}</text>')
+        elif ann_latex:
+            img, _, _ = mathsvg_image(ann_latex, detail_x, cy_box, px=detail_px_eff,
+                                      color=ac, anchor="start")
+            parts.append(img)
+        elif ann_label:
+            parts.append(f'<text x="{detail_x:.1f}" y="{cy_box+detail_px_eff*0.32:.1f}" '
+                         f'text-anchor="start" font-size="{detail_px_eff}" '
+                         f'font-style="italic" fill="{ac}">{esc(ann_label)}</text>')
         y += box_h
 
-        if ann_latex or ann_label:
-            ac = ann_color or C_MUTED
-            y += ann_gap
-            if ann_latex and ann_label:
-                # centre the (math, "-- label") pair as one row
-                img, w, h = mathsvg_image(ann_latex, 0, 0, px=26, color=ac, anchor="start")
-                label = esc(f"— {ann_label}")
-                label_w = len(label) * 26 * 0.52
-                total_w = w + 14 + label_w
-                x0 = cx - total_w / 2
-                img2, _, _ = mathsvg_image(ann_latex, x0, y, px=26, color=ac, anchor="start")
-                parts.append(img2)
-                parts.append(f'<text x="{x0+w+14:.1f}" y="{y+9:.1f}" font-size="26" '
-                             f'font-style="italic" fill="{ac}">{label}</text>')
-            elif ann_latex:
-                img, _, _ = mathsvg_image(ann_latex, cx, y, px=26, color=ac)
-                parts.append(img)
-            else:
-                parts.append(f'<text x="{cx}" y="{y+9:.1f}" text-anchor="middle" font-size="26" '
-                             f'font-style="italic" fill="{ac}">{esc(ann_label)}</text>')
-            y += 14
-
         if i < n - 1:
-            y += 14
-            parts.append(f'<line x1="{cx}" y1="{y:.1f}" x2="{cx}" y2="{y+arrow_gap-14:.1f}" '
-                         f'stroke="{color}" stroke-width="5"/>')
-            ay = y + arrow_gap - 14
-            parts.append(f'<polygon points="{cx-11},{ay-14:.1f} {cx+11},{ay-14:.1f} '
-                         f'{cx},{ay:.1f}" fill="{color}"/>')
+            y += 16
+            head_h = 30
+            base_y = y + arrow_gap - head_h
+            parts.append(f'<line x1="{cx}" y1="{y:.1f}" x2="{cx}" y2="{base_y:.1f}" '
+                         f'stroke="{color}" stroke-width="10"/>')
+            tip_y = y + arrow_gap
+            parts.append(f'<polygon points="{cx-24},{base_y:.1f} {cx+24},{base_y:.1f} '
+                         f'{cx},{tip_y:.1f}" fill="{color}"/>')
             y += arrow_gap
 
     H = y + 16

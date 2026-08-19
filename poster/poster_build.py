@@ -19,6 +19,12 @@ FIG_THRESHOLD = read("fig_threshold.svg")
 FIG_ACCURACY = read("fig_accuracy.svg")
 FIG_PROPAGATION = read("fig_propagation.svg")
 FIG_QR = read("fig_qr.svg")
+FIG_QR_LARGE = FIG_QR.replace(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="37" height="37">',
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" '
+    'style="width:100%;height:100%;display:block">',
+    1,
+)
 
 import poster_figs as _pf
 
@@ -68,11 +74,13 @@ def icon_star(color, size=44):
 def chip(emoji, text, color=INK, bg="#ffffff"):
     """A short punchy emoji + one-liner callout, the witty-caption convention
     from the reference poster -- a quick aside a reader catches in passing,
-    not another paragraph to read."""
+    not another paragraph to read. `emoji` may be "" to skip the icon
+    entirely, for text that doesn't have a clean one-glyph symbol."""
+    icon = f'<span style="font-size:26px;line-height:1">{emoji}</span>' if emoji else ""
     return (f'<div style="display:inline-flex;align-items:center;gap:9px;'
             f'background:{bg};border:2px solid {color};border-radius:999px;'
             f'padding:6px 18px 6px 12px;width:fit-content">'
-            f'<span style="font-size:26px;line-height:1">{emoji}</span>'
+            f'{icon}'
             f'<span style="font-family:{MONO};font-size:21px;font-style:italic;'
             f'color:{color}">{text}</span></div>')
 
@@ -137,31 +145,38 @@ def panel(num, label, color, heading, body, extra=""):
 
 
 def lane(color, tag, title, boxes, price, price_unit, price_note, measured, quip):
-    svg, _ = _pf.fig_lane_pipeline(color, boxes)
+    # box_h/gaps trimmed from the figure defaults -- three of these stack in
+    # one narrow column now (not side by side across the full sheet), so the
+    # diagram has to earn its height back or the column runs longer than its
+    # neighbours.
+    # W is wide relative to box_h -- landscape boxes that extend horizontally
+    # without the vertical growth that kept pushing the footer off the page.
+    svg, _ = _pf.fig_lane_pipeline(color, boxes, W=1360, box_h=126, arrow_gap=48,
+                                    title_fs=46, sub_px=33, ann_px=30)
     # Deterministic sizing: cap the SVG's rendered WIDTH and let height follow
     # the viewBox aspect ratio (auto), rather than stretching to fill the
     # column. That keeps box/font size visually identical across all three
     # lanes regardless of how many pipeline stages each one has -- a lane
     # with fewer stages is simply a shorter diagram, not a stretched one.
     svg = svg.replace("<svg ",
-        '<svg style="width:100%;max-width:520px;height:auto;display:block" ', 1)
+      '<svg style="width:100%;max-width:700px;height:auto;display:block" ', 1)
     badge = "measured" if measured else "projected"
     badge_bg = INK if measured else MUTED
     return f"""
-    <div style="flex:1;display:flex;flex-direction:column;background:{CARD};
+    <div style="flex:none;display:flex;flex-direction:column;background:{CARD};
                 border:2px solid {RULE};border-top:10px solid {color}">
-      <div style="padding:22px 26px 0;display:flex;flex-direction:column;gap:14px;flex:1">
+      <div style="padding:16px 26px 0;display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;flex-direction:column;gap:4px">
           <div style="font-family:{MONO};font-size:25px;letter-spacing:.14em;
                       text-transform:uppercase;color:{color}">{tag}</div>
           <div style="font-family:{SERIF};font-size:42px;font-weight:600;color:{INK};
                       line-height:1.1">{title}</div>
         </div>
-        <div style="flex:1;display:flex;align-items:center;justify-content:center">{svg}</div>
+        <div style="display:flex;align-items:center;justify-content:center">{svg}</div>
         {quip}
       </div>
       <div style="margin-top:auto;display:flex;align-items:baseline;gap:18px;
-                  padding:18px 26px 20px;border-top:2px solid {RULE};background:#f7f5f1">
+                  padding:14px 26px 16px;border-top:2px solid {RULE};background:#f7f5f1">
         <span style="font-family:{MONO};font-size:80px;font-weight:600;color:{color};
                      line-height:1">{price}</span>
         <div style="display:flex;flex-direction:column;gap:2px">
@@ -196,12 +211,12 @@ HERO_LANES = (
 # file matches, a dashed placeholder with the label is drawn instead, so the
 # poster always builds either way.
 LOGO_SPECS = [
-    ("weizmann",       "Weizmann Institute<br>of Science"),
     ("citystgeorges",  "City St George&rsquo;s<br>Univ. of London"),
     ("technion",       "Technion &mdash; Israel<br>Institute of Technology"),
     ("sfu",            "Simon Fraser<br>University"),
     ("juelich",        "Forschungszentrum<br>J&uuml;lich &middot; PGI-8"),
     ("koeln",          "University<br>of Cologne"),
+    ("weizmann",       "Weizmann Institute<br>of Science"),
 ]
 
 import base64 as _b64
@@ -262,6 +277,13 @@ _nbqss_path = _find_logo("NBQSS")
 _nbqss_logo_uri = (_img_data_uri(_nbqss_path, max_dim=300, jpeg=True, bg="#2a1f4d")
                     if _nbqss_path else "")
 
+# The DDCL platform's near-/far-field images (from the manuscript, reproduced from
+# the platform paper).
+_ddcl1_uri = _img_data_uri(os.path.join(HERE, "..", "prx_quantum", "figures", "ddcl_1.png"),
+                           max_dim=460)
+_ddcl2_uri = _img_data_uri(os.path.join(HERE, "..", "prx_quantum", "figures", "ddcl_2.png"),
+                           max_dim=460)
+
 POSTER = f"""<!doctype html>
 <html>
 <head>
@@ -285,17 +307,7 @@ POSTER = f"""<!doctype html>
 
 <div style="width:4494px;height:3179px;background:{PAPER};color:{INK};
             padding:40px 100px 40px;box-sizing:border-box;
-            display:flex;flex-direction:column;gap:18px">
-
-  <!-- ========================== logo band ========================== -->
-  <div style="display:flex;align-items:center;gap:22px">
-{LOGO_SLOTS}
-    <div style="flex:none;padding-left:26px;border-left:2px solid {RULE}">
-      <img src="{_nbqss_logo_uri}" alt="Niels Bohr Quantum Summer School 2026,
-           Center for Quantum Mathematics, University of Southern Denmark"
-           style="flex:none;width:104px;height:104px;border-radius:12px;object-fit:cover">
-    </div>
-  </div>
+            display:flex;flex-direction:column;gap:18px;position:relative">
 
   <!-- ========================== masthead =========================== -->
   <header style="display:flex;align-items:flex-end;gap:70px;
@@ -323,7 +335,7 @@ POSTER = f"""<!doctype html>
       <div style="font-size:25px;line-height:1.5;color:{MUTED}">
         <sup>1</sup>Weizmann Institute of Science &nbsp;
         <sup>2</sup>City St George&rsquo;s, University of London<br>
-        <sup>3</sup>Technion &mdash; Israel Institute of Technology, Haifa 3200003 &nbsp;
+        <sup>3</sup>Technion &mdash; Israel Institute of Technology &nbsp;
         <sup>4</sup>Simon Fraser University<br>
         <sup>5</sup>Forschungszentrum J&uuml;lich, PGI-8 &nbsp;
         <sup>6</sup>University of Cologne
@@ -338,108 +350,123 @@ POSTER = f"""<!doctype html>
       A quantum computer is a linear machine. A fluid is not. Something has to give.
     </h2>
 
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div style="font-family:{MONO};font-size:24px;letter-spacing:.14em;
-                  text-transform:uppercase;color:{MUTED}">
-        What the equations actually do
-      </div>
-      <div style="display:flex;gap:30px">
-        <div style="flex:1.7;display:flex;align-items:center;gap:24px;background:{CARD};
-                    border:2px solid {RULE};border-top:8px solid {BLUE};padding:18px 24px">
-          <img src="{_img_data_uri(os.path.join(HERE,"figures","poster_carpet_burgers.png"), max_dim=760, jpeg=True)}"
-               alt="Burgers space-time surface: a sine wave steepening into a sawtooth shock"
-               style="flex:none;height:380px;width:auto;display:block">
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="font-family:{SERIF};font-size:34px;font-weight:600;color:{BLUE};
-                        line-height:1.2">A smooth wave steepens into a shock</div>
-            <div style="background:#eef2f8;padding:12px 18px;display:inline-flex">
-              {mathsvg(r"\partial_t u + u\,\partial_x u = \nu\,\partial_{{xx}}u", 42, color=BLUE)}
-            </div>
-            <div style="font-size:25px;line-height:1.38;color:{MUTED}">
-              Viscosity fights the steepening; the surface shows exactly where it loses.</div>
-          </div>
-        </div>
-        <div style="flex:1.7;display:flex;align-items:center;gap:24px;background:{CARD};
-                    border:2px solid {RULE};border-top:8px solid {ORANGE};padding:18px 24px">
-          <img src="{_img_data_uri(os.path.join(HERE,"figures","poster_carpet_kdv.png"), max_dim=760, jpeg=True)}"
-               alt="KdV space-time surface: a Gaussian pulse splitting into a leading soliton and trailing ripples"
-               style="flex:none;height:380px;width:auto;display:block">
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="font-family:{SERIF};font-size:34px;font-weight:600;color:{ORANGE};
-                        line-height:1.2">Dispersion splits a pulse into a soliton and a wave train</div>
-            <div style="background:#fdf1e6;padding:12px 18px;display:inline-flex">
-              {mathsvg(r"\partial_t u + u\,\partial_x u + \delta\,\partial_{{xxx}}u = 0", 42, color=ORANGE)}
-            </div>
-            <div style="font-size:25px;line-height:1.38;color:{MUTED}">
-              No energy is lost &mdash; it just redistributes across a trailing ripple train.</div>
-          </div>
-        </div>
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;
-                    justify-content:center;gap:20px;background:#e8e5df;
-                    border-left:10px solid {MUTED};padding:18px 22px">
-          <span style="font-family:{MONO};font-size:26px;font-weight:600;letter-spacing:.08em;
-                       text-transform:uppercase;color:{MUTED};text-align:center;line-height:1.35">
-            Both discretise to<br>one quadratic ODE</span>
-          {mathsvg(r"\dot{{u}} = F_1 u + F_2(u\otimes u)", 46, color=INK, block=True)}
-        </div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:40px;align-items:stretch">{HERO_LANES}
-    </div>
   </section>
 
   <!-- ========================= three columns ======================= -->
-  <div style="display:grid;grid-template-columns:1120px 1540px 1450px;gap:36px;flex:1">
+  <div style="display:grid;grid-template-columns:1400px 1430px 1380px;gap:36px;flex:1">
 
     <!-- ---------------- column A ---------------- -->
     <div style="display:flex;flex-direction:column;gap:20px">
-      {panel("1", "The problem", BLUE,
-             "Discretising a conservation law usually breaks it",
-             "The obvious way to write the equations on a grid doesn't respect the "
-             "physics: a naive version drifted <b>11%</b> away from a quantity the real "
-             "equation keeps exactly fixed.",
+          <div style="font-family:{MONO};font-size:44px;font-weight:700;letter-spacing:.06em;
+            text-transform:uppercase;color:{MUTED}"
+          >Motivation &amp; context</div>
+      {panel("1", "What is the problem?", BLUE,
+                 "Two nonlinear PDEs, one quantum bottleneck",
+                 "Quantum hardware evolves states linearly, while fluid equations contain "
+                 "nonlinear self-interaction. The two benchmark equations make the problem concrete:",
              f'''
-      <div style="background:#eef2f8;border-left:8px solid {BLUE};padding:22px 26px;
-                  display:flex;flex-direction:column;gap:10px">
-        {mathsvg(r"u^{\top}F_2(u \otimes u) = 0", 42, color=BLUE, block=True, align="left")}
-        <div style="font-size:29px;line-height:1.4;color:{BODY}">
-          We found a version of that term that fixes it exactly &mdash; both equations
-          now obey the physical rule at <b>any grid size</b>, no exceptions.
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="background:#eef2f8;border-left:8px solid {BLUE};padding:20px 24px;
+                        display:flex;align-items:center;gap:26px">
+              <img src="{_img_data_uri(os.path.join(HERE,"figures","poster_carpet_burgers.png"), max_dim=960, jpeg=True)}"
+                   alt="Burgers carpet plot: a sine wave steepening into a shock"
+                   style="width:561px;height:480px;object-fit:contain;display:block;flex:none">
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <div style="font-family:{MONO};font-size:23px;font-weight:600;letter-spacing:.08em;
+                            text-transform:uppercase;color:{BLUE}">Viscous Burgers</div>
+                <div style="font-family:{SERIF};font-size:43px;font-weight:600;color:{INK};
+                            line-height:1.2;white-space:nowrap">∂ₜu + u∂ₓu = ν∂ₓₓu</div>
+                <div style="font-size:24px;line-height:1.3;color:{MUTED}">Dissipative: viscosity fights the steepening.</div>
+              </div>
         </div>
-        {chip("🧩", "one broken symmetry, patched for good", BLUE, "#eef2f8")}
-      </div>''')}
+            <div style="background:#fdf1e6;border-left:8px solid {ORANGE};padding:20px 24px;
+                        display:flex;align-items:center;gap:26px">
+              <img src="{_img_data_uri(os.path.join(HERE,"figures","poster_carpet_kdv.png"), max_dim=960, jpeg=True)}"
+                   alt="KdV carpet plot: a pulse splitting into a soliton and ripples"
+                   style="width:573px;height:480px;object-fit:contain;display:block;flex:none">
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <div style="font-family:{MONO};font-size:23px;font-weight:600;letter-spacing:.08em;
+                            text-transform:uppercase;color:{ORANGE}">Korteweg&ndash;de Vries (KdV)</div>
+                <div style="font-family:{SERIF};font-size:41px;font-weight:600;color:{INK};
+                            line-height:1.2;white-space:nowrap">∂ₜu + u∂ₓu + δ∂ₓₓₓu = 0</div>
+                <div style="font-size:24px;line-height:1.3;color:{MUTED}">Conservative: dispersion redistributes energy.</div>
+              </div>
+            </div>
+          </div>''')}
 
-      {panel("2", "A trap in the time axis", BLUE,
-             "The simplest way to step forward in time quietly adds energy",
-             "The most obvious time-stepping method makes KdV's wave grow a little "
-             "on every single step, however small the step is. Swapping in a "
-             "slightly smarter method fixes it completely.",
-             chip("⚖️", "zero drift, for the price of one extra solve", BLUE))}
+            {panel("2", "Why is it hard?", RED,
+              "Nonlinearity, physics, resources, and readout all become part of the cost.",
+              "The quadratic term cannot be applied as a unitary gate; discretization must "
+              "preserve dissipation or conservation; embedding, block encoding, QSVT degree, "
+              "and readout compound.",
+              f'''<div style="display:grid;grid-template-columns:250px 1fr;gap:14px 18px;
+                  align-items:center;font-size:25px;line-height:1.28;color:{BODY}">
+         <b>NONLINEARITY</b><span>{mathsvg(r"u\otimes u\notin\mathcal{U}", 34, color=INK)}</span>
+         <b>PHYSICS</b><span>{mathsvg(r"u^\top F_2(u\otimes u)=0", 32, color=INK)}</span>
+         <b>RESOURCES</b><span>embedding, encoding, degree, post-selection</span>
+         <b>READOUT</b><span>compression does not return the full field</span>
+            </div>''')}
 
-      <div style="background:{INK};color:#f7f6f3;padding:28px 30px;
-                  display:flex;flex-direction:column;gap:15px;flex:1">
+      <div style="background:{INK};color:#f7f6f3;padding:22px 26px;
+          display:flex;flex-direction:column;gap:10px;flex:none">
         <div style="display:flex;align-items:center;gap:14px">
           {icon_target("#7fa9d8", 40)}
-          <div style="font-family:{MONO};font-size:27px;font-weight:600;letter-spacing:.16em;
-                      text-transform:uppercase;color:#cbd3dd">What is new here</div>
-        </div>
-        <ul style="font-size:27px;line-height:1.34;display:flex;flex-direction:column;gap:10px">
-          <li>We pinned down exactly <b>where</b> the cost comes from &mdash; most of
-              it turns out to be fixable, only one part is a hard physical wall.</li>
-          <li>A cleaner way to say "how nonlinear is too nonlinear" &mdash; a number
-              that doesn't change just because you use a finer grid.</li>
-          <li>A trick that avoids a slow classical check almost every time it's needed,
-              with a proof it's always safe to skip.</li>
-          <li>We solved both equations end to end, not just the easy one.</li>
+            <div style="font-family:{MONO};font-size:27px;font-weight:600;letter-spacing:.16em;
+            text-transform:uppercase;color:#cbd3dd">Current solutions available</div>
+    </div>
+    <ul style="font-size:22px;line-height:1.24;display:flex;flex-direction:column;gap:7px">
+      <li><b style="color:#dfe3e8">CLASSICAL CFD</b> &mdash; still the default in practice:
+        mature and well-understood, but cost explodes with resolution and dimension.</li>
+      <li><b style="color:#7fa9d8">QUANTUM LINEAR SOLVERS</b> &mdash; promise big speedups
+        for linear problems; nonlinearity still needs a workaround like ours.</li>
+      <li><b style="color:#7fd0c2">VARIATIONAL QUANTUM ALGORITHMS</b> &mdash; an active
+        line of work across many groups: shallow circuits, classical optimizer, runs today.</li>
+      <li><b style="color:#c9a6e0">QUANTUM LATTICE METHODS</b> &mdash; recast the fluid as
+        collide-and-stream rules that map more naturally onto quantum gates; still early.</li>
+      <li><b style="color:#e0a064">ANALOG PHYSICAL SIMULATORS</b> &mdash; a device whose own
+        physics obeys the target equation; no circuit, but limited to a matching equation.</li>
         </ul>
       </div>
     </div>
 
     <!-- ---------------- column B : the wall ---------------- -->
     <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="font-family:{MONO};font-size:44px;font-weight:700;letter-spacing:.06em;
+                  text-transform:uppercase;color:{MUTED}">Our work</div>
+      <div style="display:flex;flex-direction:column;gap:14px;flex:1;
+                  justify-content:flex-start;margin-left:25px;margin-right:25px">
+        {HERO_LANES}
+      </div>
+
+      <div style="border:3px solid {INK};padding:24px 28px;display:flex;
+                  flex-direction:column;gap:12px;margin-left:25px;margin-right:25px">
+        <div style="display:flex;align-items:center;gap:12px">
+          {icon_warning(RED, 36)}
+          <div style="font-family:{MONO};font-size:25px;letter-spacing:.14em;
+                      text-transform:uppercase;color:{MUTED}">Where this breaks down</div>
+        </div>
+        <ul style="font-size:27px;line-height:1.36;color:{BODY};display:flex;
+                   flex-direction:column;gap:9px">
+          <li>Burgers has a well-known shortcut solution, so it can't prove a method
+              handles hard nonlinear physics &mdash; that's why we insisted on KdV, too,
+              which has no such shortcut.</li>
+          <li>The classical optimiser can get stuck, and isn't guaranteed to find
+              the right answer every time.</li>
+          <li>The gate counts we measured reflect how we happened to build the
+              circuit, not a hard limit &mdash; a smarter construction should do
+              much better.</li>
+          <li>These results are for a 1D fluid; a genuine speed advantage would need
+              a much richer, higher-dimensional problem.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ---------------- column C : results ---------------- -->
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="font-family:{MONO};font-size:44px;font-weight:700;letter-spacing:.06em;
+                  text-transform:uppercase;color:{MUTED}">Results</div>
       {panel("3", "Result &mdash; the wall", RED,
-             "This route only works for gentle flows &mdash; and gentle isn\'t interesting",
+             "Only works for gentle flows",
              "There is a hard speed limit built into the maths: past a certain point "
              "(how fast the fluid moves, relative to how much it resists that motion), "
              "this approach simply stops being provably correct, no matter how much "
@@ -465,82 +492,90 @@ POSTER = f"""<!doctype html>
             Roughly a day and a half on a future fault-tolerant machine, versus
             about a millisecond today.</div>
         </div>
-        {chip("🧱", "an honest wall, not a workaround", RED)}
+        {chip("", "an honest wall, not a workaround", RED)}
       </div>''')}
-    </div>
-
-    <!-- ---------------- column C : the way out ---------------- -->
-    <div style="display:flex;flex-direction:column;gap:20px">
       {panel("4", "Result &mdash; the way out", TEAL,
-             "Skip the expensive step entirely, and the circuits fit on today&rsquo;s hardware",
-             "Instead of the costly rewrite, a small quantum circuit holds a snapshot of "
-             "the fluid, and an ordinary classical optimiser nudges it forward one step "
-             "at a time. On real hardware, the shape of the wave still comes through "
-             "clearly &mdash; including the steepening.",
+             "Skip the expensive step entirely",
+             "A small quantum circuit holds a snapshot of the fluid, and a classical "
+             "optimiser nudges it forward one step at a time &mdash; the wave's shape "
+             "still comes through clearly on real hardware, steepening included.",
              f'''
-      {figbox(FIG_PROPAGATION, 290)}
-      <div style="background:#edf5f3;border-left:8px solid {TEAL};padding:20px 26px;
-                  font-size:29px;line-height:1.4;color:{BODY}">
-        <b>What matters:</b> the idea itself works almost perfectly &mdash; what's left
-        to fix is today's noisy hardware, not the method.
-      </div>
+      {figbox(FIG_PROPAGATION, 260)}
       {chip("🚀", "runs today, on real qubits", TEAL)}''')}
 
-      <div style="border:3px solid {INK};padding:24px 28px;display:flex;
-                  flex-direction:column;gap:12px">
-        <div style="display:flex;align-items:center;gap:12px">
-          {icon_warning(RED, 36)}
-          <div style="font-family:{MONO};font-size:25px;letter-spacing:.14em;
-                      text-transform:uppercase;color:{MUTED}">Where this breaks down</div>
-        </div>
-        <ul style="font-size:27px;line-height:1.36;color:{BODY};display:flex;
-                   flex-direction:column;gap:9px">
-          <li>Burgers has a well-known shortcut solution, so it can't prove a method
-              handles hard nonlinear physics &mdash; that's why we insisted on KdV, too,
-              which has no such shortcut.</li>
-          <li>The classical optimiser can get stuck, and isn't guaranteed to find
-              the right answer every time.</li>
-          <li>The gate counts we measured reflect how we happened to build the
-              circuit, not a hard limit &mdash; a smarter construction should do
-              much better.</li>
-          <li>These results are for a 1D fluid; a genuine speed advantage would need
-              a much richer, higher-dimensional problem.</li>
-        </ul>
+      {panel("5", "Result &mdash; the analog stand-in", ORANGE,
+             "Seen through the cavity",
+             "The programmable laser array itself: individual sites near-field (left), and "
+             "the far-field pattern that reports how coherently they lock together (right) "
+             "&mdash; the physical stand-in for solving the equation.",
+             f'''
+      <div style="display:flex;gap:16px;justify-content:center">
+        <img src="{_ddcl1_uri}" alt="DDCL near-field: individual programmable laser sites"
+             style="height:220px;width:370px;object-fit:cover;border:1px solid {RULE}">
+        <img src="{_ddcl2_uri}" alt="DDCL far-field: collective coherence of the array"
+             style="height:220px;width:370px;object-fit:cover;border:1px solid {RULE}">
       </div>
+      {chip("🔬", "physics, not silicon, does the computing", ORANGE)}''')}
     </div>
   </div>
 
   <!-- ============================ footer =========================== -->
-  <footer style="display:flex;gap:50px;align-items:flex-start;
-                 border-top:6px solid {INK};padding-top:24px">
-    <div style="flex:1;display:flex;flex-direction:column;gap:14px">
-      <div style="display:flex;align-items:center;gap:14px">
-        {icon_star(BLUE, 38)}
-        <div style="font-family:{MONO};font-size:27px;font-weight:600;letter-spacing:.16em;
-                    text-transform:uppercase;color:{BLUE}">Take home</div>
+  <footer style="display:flex;flex-direction:column;gap:20px;
+                 border-top:6px solid {INK};padding-top:22px;margin-bottom:150px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:34px;align-items:stretch">
+      <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:{MONO};font-size:24px;font-weight:600;letter-spacing:.14em;
+                    text-transform:uppercase;color:{MUTED}">References</div>
+        <div style="font-size:19px;line-height:1.32;color:{BODY}">
+          1. Setty, <i>J. Phys. A</i> 59, 185303 (2026) &nbsp; 2. Setty, arXiv:2508.21667 (2025)<br>
+          3. Liu et al., <i>PNAS</i> 118, e2026805118 (2021) &nbsp; 4. Forets &amp; Pouly, arXiv:1711.02552 (2017)<br>
+          5. Wu et al., <i>SIAM J. Sci. Comput.</i> 47, A943 (2025) &nbsp; 6. Gonzalez-Conde et al., <i>PRResearch</i> 7, 023254 (2025)<br>
+          7. Gily&eacute;n et al., STOC 2019 &nbsp; 8. Yuan et al., <i>Quantum</i> 3, 191 (2019)<br>
+          9. Mitarai et al., <i>PRA</i> 98, 032309 (2018) &nbsp; 10. Costa et al., <i>npj Quantum Inf.</i> 11, 141 (2025)<br>
+          11. Shende et al., IEEE TCAD 25, 1000 (2006) &nbsp; 12. NBQSS 2026 DDCL platform
+        </div>
       </div>
-      <div style="display:flex;gap:38px">
-        <div style="flex:1;font-size:31px;line-height:1.38;color:{BODY}">
-          <b style="color:{INK}">1.</b> Rewriting the fluid as a bigger linear problem
-          saves memory &mdash; and nothing else.</div>
-        <div style="flex:1;font-size:31px;line-height:1.38;color:{BODY}">
-          <b style="color:{INK}">2.</b> The real obstacle is the physics itself, not the
-          engineering &mdash; and we now know exactly where it bites.</div>
-        <div style="flex:1;font-size:31px;line-height:1.38;color:{BODY}">
-          <b style="color:{INK}">3.</b> Skipping that rewrite already works today &mdash;
-          the only thing standing in the way is noisy hardware.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;
+                  border-left:3px solid {RULE};padding-left:28px">
+        <div style="display:flex;align-items:center;gap:12px">
+          {icon_star(BLUE, 34)}
+          <div style="font-family:{MONO};font-size:34px;font-weight:600;letter-spacing:.14em;
+                      text-transform:uppercase;color:{BLUE}">Take home</div>
+        </div>
+        <div style="font-size:30px;line-height:1.32;color:{BODY}">
+          <b>Memory:</b> linear embedding buys exponential compression, at a real cost.<br>
+          <b>Limit:</b> Carleman convergence sets a hard wall, not just a hard problem.<br>
+          <b>Today:</b> variational propagation already fits on shallow hardware.<br>
+          <b>Physics:</b> the DDCL laser shows the equation can be built, not just simulated.
+        </div>
       </div>
-    </div>
-    <div style="flex:none;display:flex;align-items:center;gap:22px;
-                border-left:3px solid {RULE};padding-left:40px">
-      <div style="width:240px;height:240px">{FIG_QR}</div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <div style="font-size:29px;font-weight:600;color:{INK}">Code, notebooks<br>&amp; manuscript</div>
-        <div style="font-family:{MONO};font-size:23px;line-height:1.38;color:{MUTED}">
-          github.com/sahilugale/<br>NBQSS_2026_NLPDE</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+                  border-left:3px solid {RULE};padding-left:28px">
+        <div style="font-family:{MONO};font-size:24px;font-weight:600;letter-spacing:.14em;
+                    text-transform:uppercase;color:{MUTED}">Scan for code</div>
+        <div style="display:flex;align-items:center;gap:18px">
+            <div style="width:130px;height:130px;flex:none">{FIG_QR_LARGE}</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:27px;font-weight:600;color:{INK};white-space:nowrap">Code, notebooks &amp; manuscript</div>
+            <div style="font-family:{MONO};font-size:21px;line-height:1.34;color:{BLUE};white-space:nowrap">
+              github.com/sahilugale/NBQSS_2026_NLPDE</div>
+          </div>
+        </div>
       </div>
     </div>
   </footer>
+
+  <!-- ========================== logo band ========================== -->
+  <div style="position:absolute;left:100px;right:100px;bottom:0;
+              display:flex;align-items:center;gap:80px;background:{PAPER};
+              border-top:6px solid {INK};padding-top:12px;padding-bottom:10px">
+{LOGO_SLOTS}
+    <div style="flex:none;padding-left:26px">
+      <img src="{_nbqss_logo_uri}" alt="Niels Bohr Quantum Summer School 2026,
+           Center for Quantum Mathematics, University of Southern Denmark"
+           style="flex:none;width:104px;height:104px;border-radius:12px;object-fit:cover">
+    </div>
+  </div>
 </div>
 </x-dc>
 
