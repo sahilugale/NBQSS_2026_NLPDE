@@ -152,9 +152,10 @@ per timestep rather than a single expensive one.
 `report/report.pdf` (source: `report/report.tex`, REVTeX 4-2) is the complete, self-contained
 technical writeup: every discretization choice and algorithmic fix in this repository derived and
 proved from scratch (not just asserted), a full Reynolds-number/resolution analysis, exact resource
-tables (qubits/gates/depth) for every system actually solved, and a measured (not estimated) scaling
-study of both pathways' circuits. Start there for the full mathematical picture; this README is the
-quick-reference version.
+tables (qubits/gates/depth) for every system actually solved, and a scaling study of both pathways'
+circuits obtained by transpiling and counting gates on our own circuits at each size, not by
+evaluating a closed-form asymptotic formula alone. Start there for the full mathematical picture;
+this README is the quick-reference version.
 
 ## Installation
 
@@ -192,12 +193,16 @@ network access needed.
 
 ## AI disclosure
 
-Substantial parts of this repository's implementation, debugging, numerical verification, and the
-`report/` writeup were produced with the assistance of Claude (Anthropic), used interactively under
-the direction and review of the team listed above. All physical claims, discretization choices, and
-numerical results were independently verified against classical reference calculations (documented
-throughout `report/report.pdf`) rather than accepted on the model's assertion alone; all mathematical
-proofs were checked step-by-step; all cited literature was checked against its original source.
+The physics, algorithms, and the great majority of the code in this repository are the team's own:
+the choice of Carleman linearization and QSVT, the variational natural-gradient formulation, the
+discretization, and the fixes described throughout this README and `report/report.pdf` originated
+with the team. Claude (Anthropic) was used interactively, under the team's direction and review, to
+help implement specific pieces of that design, debug issues the team identified, run numerical
+verification, and draft parts of the `report/` writeup and this README. All physical claims,
+discretization choices, and numerical results were independently verified by the team against
+classical reference calculations (documented throughout `report/report.pdf`) rather than accepted on
+the model's assertion alone; all mathematical proofs were checked step-by-step; all cited literature
+was checked against its original source.
 
 ## References
 

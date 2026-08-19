@@ -1,0 +1,92 @@
+{
+  "latex-workshop.latex.recipe.default": "pdflatex x2",
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "pdflatex x2",
+      "tools": ["pdflatex", "pdflatex"]
+    }
+  ],
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-outdir=%OUTDIR%",
+        "-auxdir=%AUXDIR%",
+        "%DOC%"
+      ],
+      "env": {
+        "PATH": "/usr/local/texlive/2026/bin/x86_64-linux:/local/sugale/hackathons/NQSS_2026_Challenge/nqss_2026/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/pgi-8/cluster/bin:/opt/pgi-8/common/bin:/Users/ugale/.local/bin:/Users/ugale/bin"
+      }
+    },
+    {
+      "name": "lualatexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-lualatex",
+        "-outdir=%OUTDIR%",
+        "-auxdir=%AUXDIR%",
+        "%DOC%"
+      ],
+      "env": {
+        "PATH": "/usr/local/texlive/2026/bin/x86_64-linux:/local/sugale/hackathons/NQSS_2026_Challenge/nqss_2026/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/pgi-8/cluster/bin:/opt/pgi-8/common/bin:/Users/ugale/.local/bin:/Users/ugale/bin"
+      }
+    },
+    {
+      "name": "xelatexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-xelatex",
+        "-outdir=%OUTDIR%",
+        "-auxdir=%AUXDIR%",
+        "%DOC%"
+      ],
+      "env": {
+        "PATH": "/usr/local/texlive/2026/bin/x86_64-linux:/local/sugale/hackathons/NQSS_2026_Challenge/nqss_2026/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/pgi-8/cluster/bin:/opt/pgi-8/common/bin:/Users/ugale/.local/bin:/Users/ugale/bin"
+      }
+    },
+    {
+      "name": "latexmk_rconly",
+      "command": "latexmk",
+      "args": [
+        "%DOC%"
+      ],
+      "env": {
+        "PATH": "/usr/local/texlive/2026/bin/x86_64-linux:/local/sugale/hackathons/NQSS_2026_Challenge/nqss_2026/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/pgi-8/cluster/bin:/opt/pgi-8/common/bin:/Users/ugale/.local/bin:/Users/ugale/bin"
+      }
+    },
+    {
+      "name": "pdflatex",
+      "command": "pdflatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {
+        "PATH": "/usr/local/texlive/2026/bin/x86_64-linux:/local/sugale/hackathons/NQSS_2026_Challenge/nqss_2026/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/pgi-8/cluster/bin:/opt/pgi-8/common/bin:/Users/ugale/.local/bin:/Users/ugale/bin"
+      }
+    },
+    {
+      "name": "bibtex",
+      "command": "bibtex",
+      "args": [
+        "%DOCFILE%"
+      ],
+      "env": {
+        "PATH": "/usr/local/texlive/2026/bin/x86_64-linux:/local/sugale/hackathons/NQSS_2026_Challenge/nqss_2026/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/pgi-8/cluster/bin:/opt/pgi-8/common/bin:/Users/ugale/.local/bin:/Users/ugale/bin"
+      }
+    }
+  ]
+}
