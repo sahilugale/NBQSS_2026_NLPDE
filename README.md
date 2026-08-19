@@ -142,7 +142,7 @@ per timestep rather than a single expensive one.
 │   ├── Burgers_variational_qiskit.ipynb   # setup, time-propagation, results, resource estimates
 │   └── KdV_variational_qiskit.ipynb       # setup, time-propagation, results, resource estimates
 ├── scaling_analysis/              # cost-analysis scripts backing the manuscript's Sec. IV
-│   └── scaling.py, kappa.py, verify.py, figs.py   (Nadav Carmel)
+│   └── scaling.py, kappa.py, verify.py, figs.py
 ├── report/                        # full APS-style writeup (see "Report" below)
 │   └── report.tex/.pdf, fig_*.pdf
 ├── prx_quantum/                   # combined PRX Quantum-style manuscript (see "Report" below)

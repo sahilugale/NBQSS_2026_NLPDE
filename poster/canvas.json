@@ -1,0 +1,7 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 4494, "h": 3179, "print": "fixed",
+      "title": "The Price of Linearity — A0 landscape" }
+  ],
+  "launch": { "view": "focused", "file": "Main.dc.html" }
+}

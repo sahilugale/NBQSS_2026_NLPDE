@@ -60,7 +60,6 @@ Two threads tie the sources together and are not present in any one of them alon
   substyle in this installation, and PRX Quantum shares PRX formatting. Flagged in a comment at the
   top of `main.tex`. Verify against current PRX Quantum author guidelines before submission,
   along with the popular-summary length limit.
-- **`Nadav's home institution`** is still a placeholder in the author block.
 - **The DDCL section claims only what the source supports**: the platform, the mapping derivation,
   and the stationary `tanh` profile as the accessible observable. §VI C states plainly that no
   time-resolved analog trajectory is presented, that the phase-only reduction has stated validity

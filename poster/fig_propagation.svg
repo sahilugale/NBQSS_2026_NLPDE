@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 690" font-family="'IBM Plex Sans', system-ui, sans-serif" role="img" aria-label="Variational Burgers propagation: the on-device curve still tracks the classical target">
+<line x1="108.0" y1="357.0" x2="722.0" y2="357.0" stroke="#8a9199" stroke-opacity="0.45" stroke-width="1.5"/>
+<text x="415.0" y="98" text-anchor="middle" font-size="34" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">t = 0.10</text>
+<polyline points="108.0,357.0 184.8,281.5 261.5,196.6 338.2,205.6 415.0,357.0 491.8,508.4 568.5,517.4 645.2,432.5 722.0,357.0" fill="none" stroke="#8a9199" stroke-width="26" stroke-opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="108.0,357.0 184.8,281.5 261.5,196.6 338.2,205.6 415.0,357.0 491.8,508.4 568.5,517.4 645.2,432.5 722.0,357.0" fill="none" stroke="#14796b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="108.0" cy="357.0" r="10" fill="#14796b"/>
+<circle cx="184.8" cy="281.5" r="10" fill="#14796b"/>
+<circle cx="261.5" cy="196.6" r="10" fill="#14796b"/>
+<circle cx="338.2" cy="205.6" r="10" fill="#14796b"/>
+<circle cx="415.0" cy="357.0" r="10" fill="#14796b"/>
+<circle cx="491.8" cy="508.4" r="10" fill="#14796b"/>
+<circle cx="568.5" cy="517.4" r="10" fill="#14796b"/>
+<circle cx="645.2" cy="432.5" r="10" fill="#14796b"/>
+<polyline points="108.0,403.9 184.8,272.9 261.5,200.1 338.2,207.7 415.0,316.6 491.8,500.6 568.5,508.2 645.2,443.1 722.0,403.9" fill="none" stroke="#d2691e" stroke-width="6" stroke-dasharray="4 12" stroke-linecap="round"/>
+<rect x="99.0" y="394.9" width="18" height="18" fill="#d2691e"/>
+<rect x="175.8" y="263.9" width="18" height="18" fill="#d2691e"/>
+<rect x="252.5" y="191.1" width="18" height="18" fill="#d2691e"/>
+<rect x="329.2" y="198.7" width="18" height="18" fill="#d2691e"/>
+<rect x="406.0" y="307.6" width="18" height="18" fill="#d2691e"/>
+<rect x="482.8" y="491.6" width="18" height="18" fill="#d2691e"/>
+<rect x="559.5" y="499.2" width="18" height="18" fill="#d2691e"/>
+<rect x="636.2" y="434.1" width="18" height="18" fill="#d2691e"/>
+<line x1="108.0" y1="582" x2="722.0" y2="582" stroke="#22262b" stroke-width="3"/>
+<text x="108.0" y="628" text-anchor="middle" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">0</text>
+<text x="415.0" y="628" text-anchor="middle" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">0.5</text>
+<text x="722.0" y="628" text-anchor="middle" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">1</text>
+<text x="415.0" y="674" text-anchor="middle" font-size="31" fill="#22262b">x</text>
+<line x1="800.0" y1="357.0" x2="1414.0" y2="357.0" stroke="#8a9199" stroke-opacity="0.45" stroke-width="1.5"/>
+<text x="1107.0" y="98" text-anchor="middle" font-size="34" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">t = 0.30</text>
+<polyline points="800.0,357.0 876.8,327.2 953.5,267.4 1030.2,156.9 1107.0,357.0 1183.8,557.1 1260.5,446.6 1337.2,386.8 1414.0,357.0" fill="none" stroke="#8a9199" stroke-width="26" stroke-opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="800.0,357.0 876.8,327.2 953.5,267.4 1030.2,156.9 1107.0,357.0 1183.8,557.1 1260.5,446.6 1337.2,386.8 1414.0,357.0" fill="none" stroke="#14796b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="800.0" cy="357.0" r="10" fill="#14796b"/>
+<circle cx="876.8" cy="327.2" r="10" fill="#14796b"/>
+<circle cx="953.5" cy="267.4" r="10" fill="#14796b"/>
+<circle cx="1030.2" cy="156.9" r="10" fill="#14796b"/>
+<circle cx="1107.0" cy="357.0" r="10" fill="#14796b"/>
+<circle cx="1183.8" cy="557.1" r="10" fill="#14796b"/>
+<circle cx="1260.5" cy="446.6" r="10" fill="#14796b"/>
+<circle cx="1337.2" cy="386.8" r="10" fill="#14796b"/>
+<polyline points="800.0,387.5 876.8,297.6 953.5,268.4 1030.2,166.2 1107.0,326.5 1183.8,548.9 1260.5,446.2 1337.2,416.0 1414.0,387.5" fill="none" stroke="#d2691e" stroke-width="6" stroke-dasharray="4 12" stroke-linecap="round"/>
+<rect x="791.0" y="378.5" width="18" height="18" fill="#d2691e"/>
+<rect x="867.8" y="288.6" width="18" height="18" fill="#d2691e"/>
+<rect x="944.5" y="259.4" width="18" height="18" fill="#d2691e"/>
+<rect x="1021.2" y="157.2" width="18" height="18" fill="#d2691e"/>
+<rect x="1098.0" y="317.5" width="18" height="18" fill="#d2691e"/>
+<rect x="1174.8" y="539.9" width="18" height="18" fill="#d2691e"/>
+<rect x="1251.5" y="437.2" width="18" height="18" fill="#d2691e"/>
+<rect x="1328.2" y="407.0" width="18" height="18" fill="#d2691e"/>
+<line x1="800.0" y1="582" x2="1414.0" y2="582" stroke="#22262b" stroke-width="3"/>
+<text x="800.0" y="628" text-anchor="middle" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">0</text>
+<text x="1107.0" y="628" text-anchor="middle" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">0.5</text>
+<text x="1414.0" y="628" text-anchor="middle" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">1</text>
+<text x="1107.0" y="674" text-anchor="middle" font-size="31" fill="#22262b">x</text>
+<line x1="108" y1="132" x2="108" y2="582" stroke="#22262b" stroke-width="3"/>
+<text x="90" y="533.7" text-anchor="end" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">-1</text>
+<text x="90" y="367.0" text-anchor="end" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">0</text>
+<text x="90" y="200.3" text-anchor="end" font-size="29" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">1</text>
+<text x="34" y="357.0" transform="rotate(-90 34 357.0)" text-anchor="middle" font-size="31" fill="#22262b">u(x, t)</text>
+<line x1="48" y1="40" x2="106" y2="40" stroke="#8a9199" stroke-width="14" stroke-opacity="0.5" stroke-linecap="round"/>
+<text x="120" y="50" font-size="28" fill="#22262b">classical target</text>
+<line x1="406" y1="40" x2="464" y2="40" stroke="#14796b" stroke-width="6" stroke-opacity="1.0" stroke-linecap="round"/>
+<text x="478" y="50" font-size="28" fill="#22262b">ideal circuit</text>
+<line x1="719" y1="40" x2="777" y2="40" stroke="#d2691e" stroke-width="6" stroke-opacity="1.0" stroke-linecap="round"/>
+<text x="791" y="50" font-size="28" fill="#22262b">fake_sherbrooke, 4000 shots</text>
+</svg>

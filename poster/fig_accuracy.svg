@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 800" font-family="'IBM Plex Sans', system-ui, sans-serif" role="img" aria-label="Measured relative L2 error per timestep, ideal circuit versus device noise">
+<line x1="175" y1="604.2" x2="945" y2="604.2" stroke="#8a9199" stroke-opacity="0.28" stroke-width="1.5"/>
+<text x="155" y="614.2" text-anchor="end" font-size="29" fill="#8a9199" font-family="'IBM Plex Mono', ui-monospace, monospace">10⁻⁸</text>
+<line x1="175" y1="472.7" x2="945" y2="472.7" stroke="#8a9199" stroke-opacity="0.28" stroke-width="1.5"/>
+<text x="155" y="482.7" text-anchor="end" font-size="29" fill="#8a9199" font-family="'IBM Plex Mono', ui-monospace, monospace">10⁻⁶</text>
+<line x1="175" y1="341.1" x2="945" y2="341.1" stroke="#8a9199" stroke-opacity="0.28" stroke-width="1.5"/>
+<text x="155" y="351.1" text-anchor="end" font-size="29" fill="#8a9199" font-family="'IBM Plex Mono', ui-monospace, monospace">10⁻⁴</text>
+<line x1="175" y1="209.6" x2="945" y2="209.6" stroke="#8a9199" stroke-opacity="0.28" stroke-width="1.5"/>
+<text x="155" y="219.6" text-anchor="end" font-size="29" fill="#8a9199" font-family="'IBM Plex Mono', ui-monospace, monospace">10⁻²</text>
+<line x1="175" y1="78.0" x2="945" y2="78.0" stroke="#8a9199" stroke-opacity="0.28" stroke-width="1.5"/>
+<text x="155" y="88.0" text-anchor="end" font-size="29" fill="#8a9199" font-family="'IBM Plex Mono', ui-monospace, monospace">10⁰</text>
+<rect x="175" y="78.0" width="770" height="111.8" fill="#d2691e" fill-opacity="0.06"/>
+<polyline points="303.3,592.6 560.0,533.7 816.7,513.3" fill="none" stroke="#14796b" stroke-width="6" stroke-linecap="round"/>
+<circle cx="303.3" cy="592.6" r="11" fill="#14796b"/>
+<circle cx="560.0" cy="533.7" r="11" fill="#14796b"/>
+<circle cx="816.7" cy="513.3" r="11" fill="#14796b"/>
+<text x="842.7" y="523.3" font-size="28" fill="#14796b" font-weight="500">KdV, ideal</text>
+<polyline points="303.3,451.6 560.0,453.7 816.7,456.5" fill="none" stroke="#1f4e8c" stroke-width="6" stroke-linecap="round"/>
+<circle cx="303.3" cy="451.6" r="11" fill="#1f4e8c"/>
+<circle cx="560.0" cy="453.7" r="11" fill="#1f4e8c"/>
+<circle cx="816.7" cy="456.5" r="11" fill="#1f4e8c"/>
+<text x="842.7" y="466.5" font-size="28" fill="#1f4e8c" font-weight="500">Burgers, ideal</text>
+<polyline points="303.3,164.9 560.0,159.9 816.7,149.2" fill="none" stroke="#d2691e" stroke-width="6" stroke-linecap="round" stroke-dasharray="13 10"/>
+<circle cx="303.3" cy="164.9" r="11" fill="#d2691e"/>
+<circle cx="560.0" cy="159.9" r="11" fill="#d2691e"/>
+<circle cx="816.7" cy="149.2" r="11" fill="#d2691e"/>
+<text x="842.7" y="159.2" font-size="28" fill="#d2691e" font-weight="500">KdV, on device</text>
+<polyline points="303.3,126.1 560.0,127.3 816.7,122.5" fill="none" stroke="#d2691e" stroke-width="6" stroke-linecap="round"/>
+<circle cx="303.3" cy="126.1" r="11" fill="#d2691e"/>
+<circle cx="560.0" cy="127.3" r="11" fill="#d2691e"/>
+<circle cx="816.7" cy="122.5" r="11" fill="#d2691e"/>
+<text x="842.7" y="132.5" font-size="28" fill="#d2691e" font-weight="500">Burgers, on device</text>
+<line x1="175" y1="670" x2="945" y2="670" stroke="#22262b" stroke-width="3"/>
+<line x1="175" y1="78" x2="175" y2="670" stroke="#22262b" stroke-width="3"/>
+<text x="303.3" y="718" text-anchor="middle" font-size="30" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">1</text>
+<text x="560.0" y="718" text-anchor="middle" font-size="30" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">2</text>
+<text x="816.7" y="718" text-anchor="middle" font-size="30" fill="#22262b" font-family="'IBM Plex Mono', ui-monospace, monospace">3</text>
+<text x="560.0" y="770" text-anchor="middle" font-size="33" fill="#22262b">timestep</text>
+<text x="42" y="374.0" transform="rotate(-90 42 374.0)" text-anchor="middle" font-size="33" fill="#22262b">relative L² error vs. classical</text>
+</svg>
