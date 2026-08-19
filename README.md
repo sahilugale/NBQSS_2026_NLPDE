@@ -14,8 +14,9 @@ This repository solves two nonlinear PDEs — the viscous Burgers equation and t
 (KdV) equation — with periodic boundary conditions, using **two independent quantum algorithms**:
 
 $$
-\partial_t u + u\,\partial_x u = \nu\,\partial_{xx} u \qquad\text{(Burgers)}, \qquad
-\partial_t u + u\,\partial_x u + \delta\,\partial_{xxx} u = 0 \qquad\text{(KdV)}.
+\partial_t u + u \partial_x u = \nu \partial_{xx} u \qquad\text{(Burgers)},
+\qquad
+\partial_t u + u \partial_x u + \delta \partial_{xxx} u = 0 \qquad\text{(KdV)}.
 $$
 
 1. **Carleman linearization + QSVT** (`carleman_qsvt/`) — lift the discretized quadratic ODE into a
@@ -38,7 +39,8 @@ toolkit). Carleman linearization introduces the lifted state
 
 $$
 \mathbf y = (\mathbf u,\ \mathbf u^{\otimes 2},\ \dots,\ \mathbf u^{\otimes N_T})^{\top},
-\qquad \dot{\mathbf y} = A\mathbf y + \mathbf b,
+\qquad
+\dot{\mathbf y} = A\mathbf y + \mathbf b,
 $$
 
 and each timestep is a linear solve, approximated on a quantum computer via QSVT applied to a block
@@ -62,17 +64,17 @@ $\Delta t$ is, which is why $\delta$ is chosen fairly small.
 **Satisfying the challenge's Section 3 norm bounds.** The plain central-difference discretization of
 the convection term doesn't conserve the semi-discrete $L^2$ norm
 ($\mathbf u^T F_2(\mathbf u\otimes\mathbf u)\neq0$ in general — verified with a random vector, not
-just special symmetric inputs), so a naive KdV solution's $\|\mathbf u(t)\|_2$ drifted ~11% even
-though the PDE conserves it
-exactly, and a naive Burgers solution's $\|\mathbf u(t)\|_2$ could grow at coarse grid resolution even
-though diffusion should make it non-increasing. Both are fixed with the same standard skew-symmetric
-("conservative") form of the convective term (`discretization.construct_F2_periodic_skew`, proved and
-verified to $\mathbf u^T F_2(\mathbf u\otimes\mathbf u)=0$ at ~1e-17), used by both Carleman classes'
-`get_Fs()` and by both variational notebooks' classical reference. Now
-$\|\mathbf u(t)\|_2=\|\mathbf u_0\|_2$ to ~1e-10 for KdV and $\|\mathbf u(t)\|_2$ is provably
-non-increasing for Burgers at any grid size, matching the challenge exactly. How coarse a grid can be
-while still *visibly* respecting the Burgers bound is set by the cell Reynolds number
-$\mathrm{Re}_\Delta = U\,\Delta x/\nu$ (needs $\mathrm{Re}_\Delta\lesssim2$, i.e. $N\gtrsim\mathrm{Re}/2$)
+just special symmetric inputs), so a naive KdV solution's $\Vert\mathbf u(t)\Vert_2$ drifted ~11% even
+though the PDE conserves it exactly, and a naive Burgers solution's $\Vert\mathbf u(t)\Vert_2$ could
+grow at coarse grid resolution even though diffusion should make it non-increasing. Both are fixed
+with the same standard skew-symmetric ("conservative") form of the convective term
+(`discretization.construct_F2_periodic_skew`, proved and verified to
+$\mathbf u^T F_2(\mathbf u\otimes\mathbf u)=0$ at ~1e-17), used by both Carleman classes' `get_Fs()`
+and by both variational notebooks' classical reference. Now
+$\Vert\mathbf u(t)\Vert_2=\Vert\mathbf u_0\Vert_2$ to ~1e-10 for KdV and $\Vert\mathbf u(t)\Vert_2$
+is provably non-increasing for Burgers at any grid size, matching the challenge exactly. How coarse
+a grid can be while still *visibly* respecting the Burgers bound is set by the cell Reynolds number
+$\mathrm{Re}_\Delta = U \Delta x/\nu$ (needs $\mathrm{Re}_\Delta\lesssim2$, i.e. $N\gtrsim\mathrm{Re}/2$)
 — see `prx_quantum/main.pdf` §II D for the derivation and the numbers for both notebooks' actual
 parameters.
 
@@ -86,10 +88,10 @@ nonlinear differential equations*, PNAS **118**, e2026805118 (2021).
 descent on a parametrized circuit, one timestep at a time.**
 
 Instead of an enlarged linear embedding, the field is amplitude-encoded directly into a
-parametrized circuit, $\mathrm{amp}_t\,|\psi(\vec\theta_t)\rangle$. Each timestep minimizes
-$\|\mathrm{amp}\cdot\psi(\vec\theta) - \mathbf u_{\mathrm{target}}\|^2$ via natural-gradient descent
-with a backtracking line search, where
-$\mathbf u_{\mathrm{target}} = \mathbf u_{\mathrm{old}} + \Delta t\,F(\mathbf u_{\mathrm{rhs}})$ is the
+parametrized circuit, $\mathrm{amp}_t \vert\psi(\vec\theta_t)\rangle$. Each timestep minimizes
+$\Vert\mathrm{amp}\cdot\psi(\vec\theta) - \mathbf u_{\mathrm{target}}\Vert^2$ via
+natural-gradient descent with a backtracking line search, where
+$\mathbf u_{\mathrm{target}} = \mathbf u_{\mathrm{old}} + \Delta t F(\mathbf u_{\mathrm{rhs}})$ is the
 forward-Euler target for Burgers ($\mathbf u_{\mathrm{rhs}}=\mathbf u_{\mathrm{old}}$), but for
 **KdV uses implicit midpoint** instead
 ($\mathbf u_{\mathrm{rhs}}=(\mathbf u_{\mathrm{old}}+\mathbf u_{\mathrm{new}})/2$, solved classically
