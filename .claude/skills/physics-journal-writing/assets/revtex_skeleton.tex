@@ -1,0 +1,161 @@
+% =====================================================================
+%  Annotated REVTeX 4.2 skeleton for a Physical Review manuscript.
+%
+%  Swap the class options for the target journal:
+%    PRL      : [aps,prl,preprint,superscriptaddress]
+%    PRB      : [aps,prb,preprint,superscriptaddress]
+%    PRX      : [aps,prx,preprint,superscriptaddress]
+%    APL (AIP): [aip,apl,preprint]        -- superscript citations
+%    JAP (AIP): [aip,jap,preprint]
+%
+%  Submit with `preprint`. Compile locally with `reprint` to check the
+%  true two-column page count before you claim it fits.
+% =====================================================================
+
+\documentclass[
+  aps,prl,
+  preprint,              % <- switch to `reprint` to check page count
+  amsmath,amssymb,
+  superscriptaddress,
+  showpacs,
+  nofootinbib
+]{revtex4-2}
+
+\usepackage{graphicx}
+\usepackage{bm}          % \bm{B} for vectors -- APS style is bold, not arrows
+\usepackage{siunitx}     % \qty{5}{\kelvin}, \qty{42(5)}{\watt\per\meter\per\kelvin}
+\usepackage{dcolumn}     % decimal-aligned table columns
+\usepackage{booktabs}    % \toprule \midrule \bottomrule -- no vertical rules
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+
+\sisetup{separate-uncertainty = true, range-units = single}
+
+% --- Keep macros few and mnemonic; APS asks that they be minimal ------
+\newcommand{\kperp}{k_{\perp}}
+\newcommand{\Tc}{T_{\mathrm{c}}}
+
+\begin{document}
+
+% ---------------------------------------------------------------------
+%  TITLE: declarative, specific, no new terminology, no unfamiliar
+%  acronyms. Prefer "Observation of X in Y" over "A study of X".
+% ---------------------------------------------------------------------
+\title{Declarative statement of the principal result}
+
+\author{A.~Author}
+\email{corresponding@institution.edu}
+\affiliation{Department of Physics, University, City 12345, Country}
+
+\author{B.~Author}
+\affiliation{Second Institution, City 67890, Country}
+
+\date{\today}
+
+% ---------------------------------------------------------------------
+%  ABSTRACT: one unlabeled paragraph. PRL: 600 characters INCLUDING
+%  SPACES (~90-100 words). Five beats:
+%    (1) context  (2) gap  (3) what we did
+%    (4) THE RESULT WITH A NUMBER AND UNCERTAINTY  (5) consequence
+%  No citations, no undefined acronyms, no figure references.
+% ---------------------------------------------------------------------
+\begin{abstract}
+  ...
+\end{abstract}
+
+\maketitle   % <- NOTE: comes AFTER the abstract in REVTeX
+
+% ---------------------------------------------------------------------
+%  A PRL runs as continuous prose; sections below are for an Article.
+%  Delete the \section commands for a Letter.
+% ---------------------------------------------------------------------
+
+\section{Introduction}
+% Move 1: establish the phenomenon and why it matters (1-2 sentences)
+% Move 2: what is established, WITH NUMBERS and selective citations
+% Move 3: the gap -- no measurement / unexplored regime / theory-experiment
+%         discrepancy / conflicting results / method limitation
+% Move 4: "Here we ..." + the headline result with its number
+% Move 5: roadmap (Articles only -- omit in a Letter)
+
+\section{Theory and model}
+% Assumptions and validity range first, then the governing equations.
+% Define every symbol. Recover known limits. State conventions once:
+% units, metric signature, Fourier sign, natural units.
+
+Substituting the interaction term into the Hamiltonian gives
+\begin{align}
+  \mathcal{H} &= \sum_i \epsilon_i c_i^{\dagger} c_i
+                 + \sum_{ij} t_{ij}\, c_i^{\dagger} c_j , \label{eq:ham}
+\end{align}
+where $\epsilon_i$ is the on-site energy, $t_{ij}$ the hopping amplitude,
+and $c_i^{\dagger}$ ($c_i$) creates (annihilates) an electron on site $i$.
+% ^ Note the comma after the displayed equation: it is part of this sentence.
+% Reference it later as Eq.~(\ref{eq:ham}) or \eqref{eq:ham} -- never "(1)".
+
+\section{Experimental methods}
+% Move 1: general overview before any parameter
+% Move 2: specific parameters (quantities, temperatures, durations, geometry)
+% Move 3: justify the choices
+% Move 4: indicate care taken (calibration, controls, repeats, convergence)
+% Move 5: acknowledge method limitations WITH BOUNDS
+% Past tense throughout for what was done.
+
+\section{Results}
+% One prose block per figure:
+%   invitation -> salient feature -> quantify with uncertainty -> compare
+% Present tense for what the figure shows; past for what you found.
+
+\begin{figure}
+  \includegraphics[width=\columnwidth]{fig1.pdf}
+  % Design at 8.6 cm (single column). Fonts 7-9 pt AT THAT SIZE.
+  \caption{\label{fig:one}%
+    Title phrase stating what the figure shows. (a) What is plotted, with
+    symbols and conditions. (b) Second panel. Solid line: model; markers:
+    data. Error bars denote one standard deviation over five thermal
+    cycles; where not visible they are smaller than the markers.}
+\end{figure}
+
+\begin{table}
+  \caption{\label{tab:budget}%
+    Systematic uncertainty budget. Caption goes ABOVE the table.}
+  \begin{ruledtabular}
+  \begin{tabular}{lD{.}{.}{2}}
+    Source & \multicolumn{1}{c}{Contribution (\%)} \\
+    \colrule
+    Thermometer calibration      & 4.0 \\
+    Radiative loss correction    & 2.5 \\
+    Sample geometry              & 3.1 \\
+    \colrule
+    Total (quadrature)           & 5.8 \\
+  \end{tabular}
+  \end{ruledtabular}
+\end{table}
+
+\section{Discussion}
+% Restate the finding -> mechanism -> quantitative comparison with prior
+% work -> rule out the two leading alternatives -> limitations with bounds
+% -> implications. Calibrate every verb to the evidence.
+
+\section{Conclusions}
+% One paragraph. Claim + number, significance, next question.
+% No new results, no new references.
+
+\begin{acknowledgments}
+  Funding, facilities, and individuals. (Anonymize this block if the
+  journal uses anonymous review.)
+\end{acknowledgments}
+
+% --- Data and code availability --------------------------------------
+% Name the repository and give an archived DOI; "available on reasonable
+% request" alone is increasingly rejected.
+
+\appendix
+
+\section{Derivation of Eq.~(\ref{eq:ham})}
+% For a PRL, material that specialists need goes in End Matter (a specific
+% APS feature placed after the references) rather than a standard appendix.
+% Check the current APS markup for End Matter before using it.
+
+\bibliography{refs}   % use the publisher's .bst; never hand-format entries
+
+\end{document}
