@@ -32,7 +32,7 @@ $$
 Crank-Nicolson → linear system → QSVT.**
 
 After spatial discretization, both PDEs take the quadratic form
-$\dot{\mathbf u} = F_1\mathbf u + F_2(\mathbf u\otimes\mathbf u)$, periodic BC as required by the
+$`\dot{\mathbf u} = F_1\mathbf u + F_2(\mathbf u\otimes\mathbf u)`$, periodic BC as required by the
 challenge (`carleman_qsvt/periodic_burgers.py`, `carleman_qsvt/kdv.py`, both built on the shared
 `periodic_carleman.py` base, which also hosts `qsvt_toolkit.py`'s PDE-agnostic QSVT block-encoding
 toolkit). Carleman linearization introduces the lifted state
@@ -44,9 +44,9 @@ $$
 $$
 
 and each timestep is a linear solve, approximated on a quantum computer via QSVT applied to a block
-encoding of $A$ — time-marched with Crank-Nicolson (trapezoidal rule),
-$(I-\frac{\Delta t}{2}A)\mathbf y_{n+1} = (I+\frac{\Delta t}{2}A)\mathbf y_n$, not implicit Euler:
-same block-encoded matrix, but $O(\Delta t^2)$ local error instead of $O(\Delta t)$ -- checked
+encoding of $`A`$ — time-marched with Crank-Nicolson (trapezoidal rule),
+$`(I-\frac{\Delta t}{2}A)\mathbf y_{n+1} = (I+\frac{\Delta t}{2}A)\mathbf y_n`$, not implicit Euler:
+same block-encoded matrix, but $`O(\Delta t^2)`$ local error instead of $`O(\Delta t)`$ -- checked
 classically, needs ~20x fewer timesteps for the same accuracy (motivated by Costa, Schleich,
 Morales & Berry, npj Quantum Information 11:141 (2025)). Two block encodings are implemented and
 compared: a dense/arbitrary-unitary one, and one built
@@ -57,24 +57,24 @@ computational basis).
 
 KdV's dispersion operator is skew-symmetric (non-dissipative), unlike Burgers' diffusion operator,
 so the convergence guarantees Carleman linearization normally relies on don't transfer
-automatically. Checked directly in the notebook: truncation order $N_T$ isn't what limits accuracy
-here ($N_T=2$ vs. $3$ give near-identical RMSE) -- dispersion stiffness ($\delta/dx^3$) at fixed
-$\Delta t$ is, which is why $\delta$ is chosen fairly small.
+automatically. Checked directly in the notebook: truncation order $`N_T`$ isn't what limits accuracy
+here ($`N_T=2`$ vs. $`3`$ give near-identical RMSE) -- dispersion stiffness ($`\delta/dx^3`$) at fixed
+$`\Delta t`$ is, which is why $`\delta`$ is chosen fairly small.
 
 **Satisfying the challenge's Section 3 norm bounds.** The plain central-difference discretization of
-the convection term doesn't conserve the semi-discrete $L^2$ norm
-($\mathbf u^T F_2(\mathbf u\otimes\mathbf u)\neq0$ in general — verified with a random vector, not
-just special symmetric inputs), so a naive KdV solution's $\Vert\mathbf u(t)\Vert_2$ drifted ~11% even
-though the PDE conserves it exactly, and a naive Burgers solution's $\Vert\mathbf u(t)\Vert_2$ could
+the convection term doesn't conserve the semi-discrete $`L^2`$ norm
+($`\mathbf u^T F_2(\mathbf u\otimes\mathbf u)\neq0`$ in general — verified with a random vector, not
+just special symmetric inputs), so a naive KdV solution's $`\Vert\mathbf u(t)\Vert_2`$ drifted ~11% even
+though the PDE conserves it exactly, and a naive Burgers solution's $`\Vert\mathbf u(t)\Vert_2`$ could
 grow at coarse grid resolution even though diffusion should make it non-increasing. Both are fixed
 with the same standard skew-symmetric ("conservative") form of the convective term
 (`discretization.construct_F2_periodic_skew`, proved and verified to
-$\mathbf u^T F_2(\mathbf u\otimes\mathbf u)=0$ at ~1e-17), used by both Carleman classes' `get_Fs()`
+$`\mathbf u^T F_2(\mathbf u\otimes\mathbf u)=0`$ at ~1e-17), used by both Carleman classes' `get_Fs()`
 and by both variational notebooks' classical reference. Now
-$\Vert\mathbf u(t)\Vert_2=\Vert\mathbf u_0\Vert_2$ to ~1e-10 for KdV and $\Vert\mathbf u(t)\Vert_2$
+$`\Vert\mathbf u(t)\Vert_2=\Vert\mathbf u_0\Vert_2`$ to ~1e-10 for KdV and $`\Vert\mathbf u(t)\Vert_2`$
 is provably non-increasing for Burgers at any grid size, matching the challenge exactly. How coarse
 a grid can be while still *visibly* respecting the Burgers bound is set by the cell Reynolds number
-$\mathrm{Re}_\Delta = U \Delta x/\nu$ (needs $\mathrm{Re}_\Delta\lesssim2$, i.e. $N\gtrsim\mathrm{Re}/2$)
+$`\mathrm{Re}_\Delta = U \Delta x/\nu`$ (needs $`\mathrm{Re}_\Delta\lesssim2`$, i.e. $`N\gtrsim\mathrm{Re}/2`$)
 — see `prx_quantum/main.pdf` §II D for the derivation and the numbers for both notebooks' actual
 parameters.
 
@@ -88,16 +88,16 @@ nonlinear differential equations*, PNAS **118**, e2026805118 (2021).
 descent on a parametrized circuit, one timestep at a time.**
 
 Instead of an enlarged linear embedding, the field is amplitude-encoded directly into a
-parametrized circuit, $\mathrm{amp}_t \vert\psi(\vec\theta_t)\rangle$. Each timestep minimizes
-$\Vert\mathrm{amp}\cdot\psi(\vec\theta) - \mathbf u_{\mathrm{target}}\Vert^2$ via
+parametrized circuit, $`\mathrm{amp}_t \vert\psi(\vec\theta_t)\rangle`$. Each timestep minimizes
+$`\Vert\mathrm{amp}\cdot\psi(\vec\theta) - \mathbf u_{\mathrm{target}}\Vert^2`$ via
 natural-gradient descent with a backtracking line search, where
-$\mathbf u_{\mathrm{target}} = \mathbf u_{\mathrm{old}} + \Delta t F(\mathbf u_{\mathrm{rhs}})$ is the
-forward-Euler target for Burgers ($\mathbf u_{\mathrm{rhs}}=\mathbf u_{\mathrm{old}}$), but for
+$`\mathbf u_{\mathrm{target}} = \mathbf u_{\mathrm{old}} + \Delta t F(\mathbf u_{\mathrm{rhs}})`$ is the
+forward-Euler target for Burgers ($`\mathbf u_{\mathrm{rhs}}=\mathbf u_{\mathrm{old}}`$), but for
 **KdV uses implicit midpoint** instead
-($\mathbf u_{\mathrm{rhs}}=(\mathbf u_{\mathrm{old}}+\mathbf u_{\mathrm{new}})/2$, solved classically
+($`\mathbf u_{\mathrm{rhs}}=(\mathbf u_{\mathrm{old}}+\mathbf u_{\mathrm{new}})/2`$, solved classically
 each step and re-encoded via a second ansatz fit): forward Euler provably injects energy into KdV's
 otherwise-conservative ODE on every step (proof in `prx_quantum/main.pdf` §II C), which implicit midpoint
-does not. Every quantity needed — the Fubini-Study metric $M_{kl}$ and the gradient of the cost — is
+does not. Every quantity needed — the Fubini-Study metric $`M_{kl}`$ and the gradient of the cost — is
 measured with a **single Pauli-generator insertion** at one specific gate, or a compute-uncompute
 circuit, rather than controlling the whole ansatz as a Hadamard test would require. Since these
 circuits only give the *magnitude* of each overlap, signs are resolved by `pde_core.SignTracker`: a
