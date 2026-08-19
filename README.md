@@ -37,8 +37,8 @@ challenge (`carleman_qsvt/periodic_burgers.py`, `carleman_qsvt/kdv.py`, both bui
 toolkit). Carleman linearization introduces the lifted state
 
 $$
-\mathbf y=\begin{bmatrix}\mathbf u\\ \mathbf u^{\otimes2}\\ \vdots\\ \mathbf u^{\otimes N_T}\end{bmatrix},
-\qquad \dot{\mathbf y}=A\mathbf y+\mathbf b,
+\mathbf y = (\mathbf u,\ \mathbf u^{\otimes 2},\ \dots,\ \mathbf u^{\otimes N_T})^{\top},
+\qquad \dot{\mathbf y} = A\mathbf y + \mathbf b,
 $$
 
 and each timestep is a linear solve, approximated on a quantum computer via QSVT applied to a block
@@ -60,9 +60,10 @@ here ($N_T=2$ vs. $3$ give near-identical RMSE) -- dispersion stiffness ($\delta
 $\Delta t$ is, which is why $\delta$ is chosen fairly small.
 
 **Satisfying the challenge's Section 3 norm bounds.** The plain central-difference discretization of
-the convection term doesn't conserve the semi-discrete $L^2$ norm ($\mathbf u^T F_2(\mathbf
-u\otimes\mathbf u)\neq0$ in general — verified with a random vector, not just special symmetric
-inputs), so a naive KdV solution's $\|\mathbf u(t)\|_2$ drifted ~11% even though the PDE conserves it
+the convection term doesn't conserve the semi-discrete $L^2$ norm
+($\mathbf u^T F_2(\mathbf u\otimes\mathbf u)\neq0$ in general — verified with a random vector, not
+just special symmetric inputs), so a naive KdV solution's $\|\mathbf u(t)\|_2$ drifted ~11% even
+though the PDE conserves it
 exactly, and a naive Burgers solution's $\|\mathbf u(t)\|_2$ could grow at coarse grid resolution even
 though diffusion should make it non-increasing. Both are fixed with the same standard skew-symmetric
 ("conservative") form of the convective term (`discretization.construct_F2_periodic_skew`, proved and
