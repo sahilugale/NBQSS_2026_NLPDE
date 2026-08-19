@@ -142,7 +142,12 @@ per timestep rather than a single expensive one.
 │   └── qlsp_burgers.tex/.pdf, scaling.py, kappa.py, verify.py, figs.py
 ├── report/                        # full APS-style writeup (see "Report" below)
 │   └── report.tex/.pdf, fig_*.pdf
+├── prx_quantum/                   # combined PRX Quantum-style manuscript (see "Report" below)
+│   ├── main.tex/.pdf              # all three routes in one argument
+│   ├── make_carpets.py            # regenerates the two space-time surface figures
+│   └── figures/                   # figures (notebooks write here directly)
 ├── references/                    # challenge PDF and the original PennyLane prototype
+├── run_notebooks.py               # execute all four notebooks (regenerates paper figures)
 ├── requirements.txt
 └── README.md
 ```
@@ -156,6 +161,14 @@ tables (qubits/gates/depth) for every system actually solved, and a scaling stud
 circuits obtained by transpiling and counting gates on our own circuits at each size, not by
 evaluating a closed-form asymptotic formula alone. Start there for the full mathematical picture;
 this README is the quick-reference version.
+
+`prx_quantum/main.pdf` (source: `prx_quantum/main.tex`, REVTeX 4-2) is a second, PRX Quantum-style
+manuscript that combines three sources into one argument: this repository's implementation, the
+companion `scaling_analysis/` cost study, and the analog degenerate-cavity-laser realization of
+Burgers in `references/`. Its organizing question is what the linear embedding a quantum computer
+requires actually costs, and what happens if you decline to pay it — Carleman-QSVT pays, the
+variational method sidesteps it, and the laser platform never digitizes at all. See
+`prx_quantum/README.md` for provenance, the shared figure palette, and open items.
 
 ## Installation
 
