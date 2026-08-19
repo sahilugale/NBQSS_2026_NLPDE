@@ -2,8 +2,20 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from plot_style import COLORS
 import scaling
 from scaling import carleman_L
+
+# Shared palette (see ../plot_style.py). These figures are all about the
+# Carleman-QSVT route, so they use its blue family: dark blue = primary
+# construction (coherent permutation), light blue = the sparse-oracle
+# alternative. Red is reserved for the one fundamental obstruction, Re < pi/2.
+C_PRIMARY = COLORS['blue']
+C_SECOND  = COLORS['blue_lt']
+C_REF     = COLORS['classical']
+C_LIMIT   = COLORS['red']
 
 plt.rcParams.update({'font.size': 9, 'axes.grid': True, 'grid.alpha': 0.3,
                      'figure.dpi': 200, 'savefig.bbox': 'tight',
@@ -15,10 +27,10 @@ Re = np.linspace(0.01, 1.55, 500)
 Rstar = 2*Re/np.pi
 for eps, ls in [(1e-2, '-'), (1e-3, '--'), (1e-4, ':')]:
     Nreq = np.log(1/eps)/np.log(1/Rstar)
-    ax[0].plot(Re, Nreq, ls, color='k', lw=1.3, label=rf'$\epsilon={eps:g}$')
-ax[0].axvline(np.pi/2, color='crimson', lw=1.2)
+    ax[0].plot(Re, Nreq, ls, color=C_PRIMARY, lw=1.4, label=rf'$\epsilon={eps:g}$')
+ax[0].axvline(np.pi/2, color=C_LIMIT, lw=1.4)
 ax[0].text(np.pi/2-0.03, 40, r'$\mathrm{Re}=\pi/2$', rotation=90,
-           ha='right', va='center', color='crimson', fontsize=8)
+           ha='right', va='center', color=C_LIMIT, fontsize=8)
 ax[0].set_yscale('log'); ax[0].set_ylim(1, 300); ax[0].set_xlim(0, 1.7)
 ax[0].set_xlabel(r'Reynolds number $\mathrm{Re}=UL/\nu$')
 ax[0].set_ylabel(r'required Carleman order $N$')
@@ -33,7 +45,7 @@ for g2, mk in zip(gam2, ['o', 's', '^']):
         p1 = (1-g2)/(1-g2**Ns)
     else:
         p1 = np.array([g2/sum(g2**j for j in range(1, n+1)) for n in Ns])
-    ax[1].semilogy(Ns, p1, mk+'-', color='k', ms=3, lw=1.0,
+    ax[1].semilogy(Ns, p1, mk+'-', color=C_PRIMARY, ms=3, lw=1.0,
                    mfc='none', label=rf'$\gamma^2={g2:g}$')
 ax[1].set_xlabel(r'Carleman order $N$')
 ax[1].set_ylabel(r'$P_1$  (block-1 post-selection)')
@@ -56,12 +68,12 @@ for nx in nxs:
     kap.append(sv[-1])
 
 fig, ax = plt.subplots(1, 2, figsize=(7.0, 2.7))
-ax[0].loglog(nxs, a_cp, 'ko-', ms=3.5, lw=1.1, mfc='none',
+ax[0].loglog(nxs, a_cp, 'o-', color=C_PRIMARY, ms=3.5, lw=1.3, mfc='none',
              label=r'coherent permutation, $\alpha_{\rm cp}$')
-ax[0].loglog(nxs, a_sp, 'ks--', ms=3.5, lw=1.1,
+ax[0].loglog(nxs, a_sp, 's--', color=C_SECOND, ms=3.5, lw=1.3,
              label=r'sparse arithmetic oracle, $\alpha_{\rm sp}$')
 ref = np.array(nxs, float); ref = a_cp[0]*(ref/ref[0])**2
-ax[0].loglog(nxs, ref, 'k:', lw=0.9, label=r'$\propto n_x^2$')
+ax[0].loglog(nxs, ref, ':', color=C_REF, lw=1.0, label=r'$\propto n_x^2$')
 ax[0].set_xlabel(r'interior grid points $n_x$')
 ax[0].set_ylabel(r'subnormalisation $\alpha$')
 ax[0].legend(frameon=False, fontsize=7.5, loc='upper left')
@@ -75,9 +87,9 @@ for nx, mk in zip([5, 7, 9], ['o', 's', '^']):
         Lc = L.tocoo(); pr = set(zip(np.round(Lc.data, 9), Lc.row-Lc.col))
         ac.append(sum(abs(v) for v, _ in pr))
         s = int(np.diff(L.tocsr().indptr).max()); asp.append(s*abs(L).max())
-    ax[1].semilogy(Ns2, ac, mk+'-', color='k', ms=3.5, lw=1.1, mfc='none',
+    ax[1].semilogy(Ns2, ac, mk+'-', color=C_PRIMARY, ms=3.5, lw=1.3, mfc='none',
                    label=rf'$n_x={nx}$, cp')
-    ax[1].semilogy(Ns2, asp, mk+'--', color='0.55', ms=3.5, lw=1.1,
+    ax[1].semilogy(Ns2, asp, mk+'--', color=C_SECOND, ms=3.5, lw=1.3,
                    label=rf'$n_x={nx}$, sp')
 ax[1].set_xlabel(r'Carleman order $N$'); ax[1].set_xticks([2, 3])
 ax[1].set_ylabel(r'subnormalisation $\alpha$')
@@ -96,10 +108,10 @@ for nm, d, BE, QS, qM, ndat, mfl in cases:
     pred.append(d*(10*ndat*qM**2 + 15*mfl**2)); meas.append(QS); labs.append(nm)
 
 fig, ax = plt.subplots(figsize=(3.4, 3.0))
-ax.loglog([2e4, 6e6], [2e4, 6e6], 'k-', lw=0.8)
-ax.loglog([2e4, 6e6], [4e4, 1.2e7], 'k:', lw=0.7)
-ax.loglog([2e4, 6e6], [1e4, 3e6], 'k:', lw=0.7)
-ax.loglog(pred, meas, 'ko', ms=5, mfc='none')
+ax.loglog([2e4, 6e6], [2e4, 6e6], '-', color=C_REF, lw=1.0)
+ax.loglog([2e4, 6e6], [4e4, 1.2e7], ':', color=C_REF, lw=0.8)
+ax.loglog([2e4, 6e6], [1e4, 3e6], ':', color=C_REF, lw=0.8)
+ax.loglog(pred, meas, 'o', color=C_PRIMARY, ms=5.5, mfc='none', mew=1.4)
 for p, m, l in zip(pred, meas, labs):
     ax.annotate(l, (p, m), textcoords='offset points', xytext=(6, -8), fontsize=7)
 ax.set_xlabel(r'model  $d\,(c_{\rm BE}n_{\rm data}q_M^2+c_\Pi m_{\rm flag}^2)$')

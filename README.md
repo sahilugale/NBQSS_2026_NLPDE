@@ -114,7 +114,7 @@ simulation. The Carleman/QSVT pathway's own resource estimates put it at million
 N=5 problem (simulator-only at the sizes solved here), whereas every circuit in this variational
 pathway is within a few times the depth of the shallowest possible design for this class of problem
 (tens to ~150 gates). Each notebook's final section transpiles and runs every circuit against a real
-IBM device calibration snapshot (`FakeSherbrooke`/`FakeMarrakesh`) with device noise and shot-based
+IBM device calibration snapshot (`FakeSherbrooke`) with device noise and shot-based
 readout, not an ideal statevector — the same circuits, unmodified, could be submitted to the actual
 physical backend given queue access; the only extra cost is needing many (cheap) circuit executions
 per timestep rather than a single expensive one.

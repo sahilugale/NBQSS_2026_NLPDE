@@ -84,7 +84,7 @@ own circuits at each size, not by evaluating a closed-form asymptotic formula al
 \item[Implemented in Qiskit] all four notebooks (both PDEs $\times$ both pathways) run end to end.
 \item[Runnable on real hardware today] the variational pathway's circuits (tens to $\sim\!150$ gates,
 Table~\ref{tab:variational-resources}) are transpiled against and executed on an actual IBM device
-calibration snapshot (\texttt{FakeSherbrooke}/\texttt{FakeMarrakesh}) in every notebook's final
+calibration snapshot (\texttt{FakeSherbrooke}) in every notebook's final
 section, and are shallow enough to run on present-day noisy hardware given queue access; the
 Carleman--QSVT pathway is currently simulator-only at the problem sizes solved here
 (millions of gates, Table~\ref{tab:carleman-resources}) but requires no new physics to port to
@@ -163,7 +163,7 @@ Crucially, the variational pathway is not merely a simulator exercise: every cir
 $\sim\!150$ gates, Table~\ref{tab:variational-resources}) is shallow enough to run on \emph{present-day}
 noisy quantum hardware, not just a future fault-tolerant device. We demonstrate this directly by
 transpiling and executing every circuit against a real IBM device calibration snapshot
-(\texttt{FakeSherbrooke}/\texttt{FakeMarrakesh}) in each notebook's final section; given queue access to
+(\texttt{FakeSherbrooke}) in each notebook's final section; given queue access to
 the corresponding physical backend, the same circuits could be run as-is. The Carleman--QSVT pathway,
 by contrast, is simulator-only at the problem sizes we solve (its resource counts run into the millions
 of gates, Table~\ref{tab:carleman-resources}), reflecting the genuine cost of quantum linear-systems
@@ -637,7 +637,7 @@ Table~\ref{tab:variational} summarizes both systems, and Table~\ref{tab:variatio
 the exact transpiled cost of each circuit type in Fig.~\ref{fig:circuits}, at the qubit count actually
 used by each system. Figures~\ref{fig:burgers-var} and~\ref{fig:kdv-var} show the resulting time
 propagation: the ideal (statevector) quantum curve is visually indistinguishable from the classical
-target at every panel, and the noisy-hardware curve (FakeMarrakesh/FakeSherbrooke calibration
+target at every panel, and the noisy-hardware curve (FakeSherbrooke calibration
 snapshot, shot-based readout with device noise, sign taken from the ideal simulation since only
 $\sqrt{P(0)}$ is measurable this way) degrades gracefully.
 

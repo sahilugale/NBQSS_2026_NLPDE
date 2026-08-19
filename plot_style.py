@@ -3,12 +3,23 @@ mathtext, serif) fonts, consistent colors, no system LaTeX required."""
 
 import matplotlib.pyplot as plt
 
-# fixed categorical order, validated for colorblind-safety
+# Unified palette, shared by the notebooks, scaling_analysis/figs.py and the
+# report/paper figures. Colors carry a fixed *meaning*, not just an index, so
+# that the same hue means the same thing in every figure of the writeup:
+#
+#   classical  reference / exact solution                (neutral gray)
+#   blue       Carleman-QSVT, primary   (dense encoding)
+#   blue_lt    Carleman-QSVT, secondary (Pauli-LCU / sparse oracle)
+#   aqua       variational route, ideal quantum
+#   orange     real hardware / physical world (noisy readout, analog platform)
+#   red        reserved: the one fundamental obstruction (Re < pi/2)
 COLORS = {
-    "classical": "#52514e",  # neutral gray -- reference/exact solution
-    "blue": "#2a78d6",
-    "orange": "#eb6834",
-    "aqua": "#1baf7a",
+    "classical": "#8a9199",
+    "blue": "#1f4e8c",
+    "blue_lt": "#7fa9d8",
+    "aqua": "#14796b",
+    "orange": "#d2691e",
+    "red": "#b3261e",
     "yellow": "#eda100",
 }
 
