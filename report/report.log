@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.8.17)  19 AUG 2026 01:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.8.17)  19 AUG 2026 11:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -910,29 +910,28 @@ Class revtex4-2 Info: Taking \maketitle back from hyperref on input line 18.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\\' on input line 53.
+(hyperref)                removing `\\' on input line 62.
 
 
-Underfull \hbox (badness 3735) in paragraph at lines 135--139
+Underfull \hbox (badness 3735) in paragraph at lines 146--150
  []\OT1/cmr/bx/n/10 Carleman--QSVT \OT1/cmr/m/n/10 (Sec. [][]III[][]): the dis-
 cretized
  []
 
-
-Underfull \hbox (badness 7576) in paragraph at lines 139--142
+[1{/usr/local/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/l
+ocal/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+Underfull \hbox (badness 7576) in paragraph at lines 150--153
  []\OT1/cmr/bx/n/10 Variational natural-gradient prop-a-ga-tion
  []
 
-[1{/usr/local/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/l
-ocal/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
-[2]
-Underfull \hbox (badness 2828) in paragraph at lines 281--284
+[2] [3]
+Underfull \hbox (badness 2828) in paragraph at lines 292--295
 \OT1/cmr/m/n/10 into a lin-ear ODE on the ex-tended state $\OML/cmm/b/it/10 y \
 OT1/cmr/m/n/10 =
  []
 
-[3]
-Underfull \hbox (badness 4927) in paragraph at lines 335--338
+
+Underfull \hbox (badness 4927) in paragraph at lines 346--349
  \OML/cmm/m/it/10 n$\OT1/cmr/m/n/10 -qubit Pauli ba-sis, $\OML/cmm/m/it/10 M \O
 T1/cmr/m/n/10 = [][] \OML/cmm/m/it/10 c[]P[]$\OT1/cmr/m/n/10 , and
  []
@@ -941,28 +940,38 @@ T1/cmr/m/n/10 = [][] \OML/cmm/m/it/10 c[]P[]$\OT1/cmr/m/n/10 , and
 <fig_burgers_carleman.pdf, id=237, 1084.05pt x 361.35pt>
 File: fig_burgers_carleman.pdf Graphic file (type pdf)
 <use fig_burgers_carleman.pdf>
-Package pdftex.def Info: fig_burgers_carleman.pdf  used on input line 407.
+Package pdftex.def Info: fig_burgers_carleman.pdf  used on input line 418.
 (pdftex.def)             Requested size: 510.0pt x 169.99994pt.
 <fig_burgers_timemarching.pdf, id=238, 939.51pt x 260.17201pt>
 File: fig_burgers_timemarching.pdf Graphic file (type pdf)
 <use fig_burgers_timemarching.pdf>
-Package pdftex.def Info: fig_burgers_timemarching.pdf  used on input line 414.
+Package pdftex.def Info: fig_burgers_timemarching.pdf  used on input line 428.
 (pdftex.def)             Requested size: 246.0pt x 68.12347pt.
 <fig_burgers_carpet.pdf, id=239, 469.755pt x 361.35pt>
 File: fig_burgers_carpet.pdf Graphic file (type pdf)
 <use fig_burgers_carpet.pdf>
-Package pdftex.def Info: fig_burgers_carpet.pdf  used on input line 421.
+Package pdftex.def Info: fig_burgers_carpet.pdf  used on input line 435.
 (pdftex.def)             Requested size: 246.0pt x 189.23189pt.
  [5] [6 <./fig_burgers_carleman.pdf> <./fig_burgers_timemarching.pdf> <./fig_bu
 rgers_carpet.pdf>]
-Underfull \hbox (badness 4819) in paragraph at lines 608--612
+
+LaTeX Warning: A float is stuck (cannot be placed) on input line 552.
+
+
+LaTeX Warning: A float is stuck (cannot be placed) on input line 552.
+
+
+Class revtex4-2 Warning: Deferred float stuck during \clearpage processing.
+
+
+Underfull \hbox (badness 4819) in paragraph at lines 622--626
 []\OT1/cmr/m/n/10 Let $\OML/cmm/b/it/10 u[] \OT1/cmr/m/n/10 = [](\OML/cmm/b/it/
 10 u[] \OT1/cmr/m/n/10 + \OML/cmm/b/it/10 u[]\OT1/cmr/m/n/10 )$, so $\OML/cmm/b
 /it/10 u[] \OMS/cmsy/m/n/10 ^^@
  []
 
 
-Underfull \hbox (badness 2875) in paragraph at lines 608--612
+Underfull \hbox (badness 2875) in paragraph at lines 622--626
 \OML/cmm/b/it/10 u[] \OT1/cmr/m/n/10 = ^^A\OML/cmm/m/it/10 t f\OT1/cmr/m/n/10 (
 \OML/cmm/b/it/10 u[]\OT1/cmr/m/n/10 )$. Then $\OMS/cmsy/m/n/10 k\OML/cmm/b/it/1
 0 u[]\OMS/cmsy/m/n/10 k[] ^^@ k\OML/cmm/b/it/10 u[]\OMS/cmsy/m/n/10 k[] \OT1/cm
@@ -970,50 +979,50 @@ r/m/n/10 =
  []
 
 [7]
-Underfull \hbox (badness 1742) in paragraph at lines 630--630
+Underfull \hbox (badness 1742) in paragraph at lines 644--644
 []\OT1/cmr/m/n/9 TABLE IV. []Variational natural-gradient sys-tems solved
  []
 
 
-Overfull \hbox (3.94417pt too wide) in alignment at lines 633--639
+Overfull \hbox (3.94417pt too wide) in alignment at lines 647--653
  [] [] [] [] 
  []
 
-<fig_burgers_variational.pdf, id=493, 1084.05pt x 361.35pt>
+<fig_burgers_variational.pdf, id=491, 1084.05pt x 361.35pt>
 File: fig_burgers_variational.pdf Graphic file (type pdf)
 <use fig_burgers_variational.pdf>
-Package pdftex.def Info: fig_burgers_variational.pdf  used on input line 662.
+Package pdftex.def Info: fig_burgers_variational.pdf  used on input line 676.
 (pdftex.def)             Requested size: 510.0pt x 169.99994pt.
-<fig_kdv_variational.pdf, id=494, 1084.05pt x 361.35pt>
+<fig_kdv_variational.pdf, id=496, 1084.05pt x 361.35pt>
 File: fig_kdv_variational.pdf Graphic file (type pdf)
 <use fig_kdv_variational.pdf>
-Package pdftex.def Info: fig_kdv_variational.pdf  used on input line 669.
+Package pdftex.def Info: fig_kdv_variational.pdf  used on input line 686.
 (pdftex.def)             Requested size: 510.0pt x 169.99994pt.
-[8] [9 <./fig_burgers_variational.pdf> <./fig_kdv_variational.pdf>]
-Underfull \hbox (badness 1365) in paragraph at lines 819--822
+[8] [9 <./fig_burgers_variational.pdf> <./fig_kdv_variational.pdf>] [10]
+Underfull \hbox (badness 1365) in paragraph at lines 844--847
  \OT1/cmr/m/n/9 ``Fur-ther im-prov-ing quan-tum al-go-rithms for non-lin-
  []
 
 
-Underfull \hbox (badness 1400) in paragraph at lines 838--840
+Underfull \hbox (badness 1400) in paragraph at lines 863--865
  []\OT1/cmr/m/n/9 R. J. LeV-eque, \OT1/cmr/m/it/9 Fi-nite Vol-ume Meth-ods for 
 Hy-per-
  []
 
 No file report.bbl.
-[10] (./report.aux)
+[11] (./report.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-07-20>
  ***********
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: F5C49CEFA999569CEE1F2BFF65F97F76;6675.
+(rerunfilecheck)             Checksum: 355E22D0934421BA714776DDF10B2F90;6672.
  ) 
 Here is how much of TeX's memory you used:
- 28905 strings out of 467159
- 564588 string characters out of 5409224
- 1085309 words of memory out of 5000000
- 57613 multiletter control sequences out of 15000+600000
+ 28909 strings out of 467159
+ 564621 string characters out of 5409224
+ 1112714 words of memory out of 5000000
+ 57616 multiletter control sequences out of 15000+600000
  639091 words of font info for 82 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  106i,21n,118p,1953b,1599s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1045,10 +1054,10 @@ f-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/2026/texmf-
 dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2026/te
 xmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/202
 6/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on report.pdf (10 pages, 548921 bytes).
+Output written on report.pdf (11 pages, 555165 bytes).
 PDF statistics:
- 831 PDF objects out of 1000 (max. 8388607)
- 459 compressed objects within 5 object streams
- 86 named destinations out of 1000 (max. 500000)
+ 841 PDF objects out of 1000 (max. 8388607)
+ 465 compressed objects within 5 object streams
+ 87 named destinations out of 1000 (max. 500000)
  254 words of extra memory for PDF output out of 10000 (max. 10000000)
 

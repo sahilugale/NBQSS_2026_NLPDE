@@ -17,34 +17,30 @@
 
 \begin{document}
 
-\title{Quantum Simulation of the Burgers and Korteweg--de Vries Equations:\\
+\title{Quantum Simulation of the Burgers and Korteweg-de Vries Equations:\\
 Carleman--QSVT Linear-System Solving and Variational Natural-Gradient Time Propagation}
 
 \author{Andrei Poliakov}
-\affiliation{Niels Bohr Quantum Summer School 2026 Challenge, Center for Quantum Mathematics, University of Southern Denmark}
-\affiliation{Weizmann Institute of Science}
+\affiliation{Weizmann Institute of Science, Rehovot 7610001, Israel}
 
 \author{Kyro Jeremy Gibling}
-\affiliation{Niels Bohr Quantum Summer School 2026 Challenge, Center for Quantum Mathematics, University of Southern Denmark}
-\affiliation{City St. Georges University of London}
+\affiliation{City St George’s, University of London, 10 Northampton Square EC1V 0HB, UK}
 
 \author{Nadav Carmel}
-\affiliation{Niels Bohr Quantum Summer School 2026 Challenge, Center for Quantum Mathematics, University of Southern Denmark}
 \affiliation{Nadav's home institution}
 
 \author{Pak Tik Fong}
-\affiliation{Niels Bohr Quantum Summer School 2026 Challenge, Center for Quantum Mathematics, University of Southern Denmark}
-\affiliation{Simon Fraser University}
+\affiliation{Department of Physics, Simon Fraser University, Burnaby, British Columbia V5A 1S6, Canada}
 
 \author{Sahil Ugale}
-\affiliation{Niels Bohr Quantum Summer School 2026 Challenge, Center for Quantum Mathematics, University of Southern Denmark}
-\affiliation{Sahil's home institution}
+\affiliation{Forschungszentrum Jülich GmbH, Peter Grünberg Institute, Quantum Control (PGI-8), 52425 Jülich, Germany}
+\affiliation{Institute for Theoretical Physics, University of Cologne, D-50937 Cologne, Germany}
 
 \date{\today}
 
 \begin{abstract}
-We solve two nonlinear partial differential equations on a periodic domain --- the viscous Burgers
-equation and the Korteweg--de Vries (KdV) equation --- using two independent quantum algorithms, and
+We solve two nonlinear partial differential equations on a periodic domain, the viscous Burgers
+equation and the Korteweg--de Vries (KdV) equation using two independent quantum algorithms, and
 we verify every mathematical claim used by either one against classical reference calculations. The
 first method (Carleman--QSVT) lifts the discretized quadratic ordinary differential equation into a
 truncated linear system and solves it, at each Crank--Nicolson timestep, with the quantum singular
@@ -55,11 +51,11 @@ descent, the distance to a physically-motivated target state; the circuits used 
 more than a single ancilla and no full-ansatz controlled operations. Both pathways use the same
 periodic finite-difference discretization, closed with an exactly energy-conserving convective term
 that we derive and prove correct in three lines. This closure is what guarantees, exactly, the
-bound $\norm{u(t)}_2\le\norm{u_0}_2$ for Burgers and $\norm{u(t)}_2=\norm{u_0}_2$ for KdV --- the
+bound $\norm{u(t)}_2\le\norm{u_0}_2$ for Burgers and $\norm{u(t)}_2=\norm{u_0}_2$ for KdV, the
 latter requires switching the variational method's time integrator from forward Euler, which we prove
 injects energy on every step, to the implicit midpoint rule. We report full resource estimates for
 both pathways, including a self-contained scaling study of how gate count, circuit depth, and qubit
-count grow with problem size directly from our own implementation, and discuss honestly the one
+count grow with problem size directly from our own implementation, and discuss the one
 place where the variational method still depends on an $O(2^n)$ classical computation.
 \end{abstract}
 
@@ -81,8 +77,9 @@ route the challenge explicitly allows.
 challenge, achieved and verified by both pathways (Tables~\ref{tab:carleman},~\ref{tab:variational}).
 \item[Resource estimates] query/gate complexity, qubit counts, and (Carleman) QSVT success
 probability, both as exact numbers for the systems solved (Tables~\ref{tab:carleman-resources},
-\ref{tab:variational-resources}) and as a measured asymptotic scaling study
-(Sec.~\ref{sec:scaling}, Table~\ref{tab:bigo}) --- not estimated.
+\ref{tab:variational-resources}) and as an asymptotic scaling study
+(Sec.~\ref{sec:scaling}, Table~\ref{tab:bigo}) --- obtained by transpiling and counting gates on our
+own circuits at each size, not by evaluating a closed-form asymptotic formula alone.
 \item[Implemented in Qiskit] all four notebooks (both PDEs $\times$ both pathways) run end to end.
 \item[Runnable on real hardware today] the variational pathway's circuits (tens to $\sim\!150$ gates,
 Table~\ref{tab:variational-resources}) are transpiled against and executed on an actual IBM device
@@ -98,6 +95,7 @@ observed, and confirmed numerically to $10^{-10}$--$10^{-17}$ throughout.
 \item[Section 3 bound, $L^\infty$, Burgers] $\norm{u(t)}_\infty\le\norm{u_0}_\infty$: verified and its
 grid-resolution requirement derived (Sec.~\ref{sec:reynolds}) via the cell Reynolds number.
 \end{description}
+
 \textbf{Not fully addressed:} the KdV $L^\infty$ bound of Eq.~(7) in the challenge statement (the one
 depending on $\norm{u_0}_2^2+\norm{\partial_xu_0}_{L^2}^2$) was not separately verified beyond the
 exact $L^2$ result above. The suggested initial conditions $\cos(4\pi x)$ and
@@ -129,9 +127,9 @@ both are the physical quantities we designed our discretizations around, rather 
 optional sanity checks.
 
 Burgers dynamics are not merely a textbook model equation: they also arise directly as the continuum
-limit of a real physical system. A Digital Degenerate Cavity Laser (DDCL) --- a self-imaging optical
+limit of a real physical system. A Digital Degenerate Cavity Laser (DDCL) is a self-imaging optical
 resonator whose spatially separated laser sites are coupled with a programmable complex phase via an
-intracavity spatial light modulator --- realizes an array of Sakaguchi--Kuramoto phase oscillators;
+intracavity spatial light modulator that realizes an array of Sakaguchi--Kuramoto phase oscillators;
 in the long-wavelength continuum limit and phase-only regime, the site-phase gradient obeys exactly
 the one-dimensional viscous Burgers equation, with the effective viscosity set by the real part of the
 optical coupling and advection by its imaginary part \cite{DDCL2026}. This gives an independent,
@@ -419,7 +417,10 @@ KdV & Pauli-LCU & 13 & 396{,}632{,}217 & 185{,}505{,}488 \\
 \begin{figure*}[t]
 \includegraphics[width=\textwidth]{fig_burgers_carleman.pdf}
 \caption{Burgers wave propagation, Carleman--QSVT: classical (dashed) vs.\ dense QSVT (solid) vs.\
-Pauli-LCU QSVT (dotted).}
+Pauli-LCU QSVT (dotted). At this viscosity ($\nu=0.1$) diffusion dominates advection, so the profile
+decays and mildly skews rather than steepening into a shock; the three curves coincide to numerical
+precision because both block encodings are here shown to implement the same Carleman-lifted operator
+$A$ correctly, not merely a plausible one.}
 \label{fig:carleman-burgers}
 \end{figure*}
 
@@ -674,7 +675,10 @@ KdV ($n=2$) & metric & 3 & 55 & 33 \\
 \begin{figure*}[t]
 \includegraphics[width=\textwidth]{fig_burgers_variational.pdf}
 \caption{Burgers wave propagation, classical (dashed) vs.\ ideal quantum (solid, matches to
-$\sim10^{-6}$) vs.\ noisy hardware readout (dotted).}
+$\sim10^{-6}$) vs.\ noisy hardware readout (dotted). Viscosity here is ten times smaller than in
+Fig.~\ref{fig:carleman-burgers}, so advective steepening is far more visible before diffusion catches
+up, while the maximum principle of Sec.~\ref{sec:intro} still caps $\norm{u(t)}_\infty$; the ideal
+curve tests physical fidelity, the noisy curve tests hardware degradation.}
 \label{fig:burgers-var}
 \end{figure*}
 
@@ -682,16 +686,21 @@ $\sim10^{-6}$) vs.\ noisy hardware readout (dotted).}
 \includegraphics[width=\textwidth]{fig_kdv_variational.pdf}
 \caption{KdV wave propagation with the implicit-midpoint target of
 Sec.~\ref{sec:implicit-midpoint}; $\norm{u}_2$ is conserved to $10^{-10}$ classically and matched to
-$\sim10^{-7}$ by the quantum fit.}
+$\sim10^{-7}$ by the quantum fit. Dispersion ($\delta\partial_{xxx}u$) replaces Burgers' diffusion:
+instead of damping gradients, it spreads different wavelengths at different phase velocities, turning
+would-be steepening into an oscillatory wave train rather than a shock -- a conservative, not
+dissipative, mechanism, which is exactly why $\norm{u}_2$ stays constant here (Sec.~\ref{sec:closure})
+where it strictly decreases for Burgers.}
 \label{fig:kdv-var}
 \end{figure*}
 
 \section{Resource scaling}
 \label{sec:scaling}
 
-We measured, directly from our own implementation (not estimated), how each pathway's resources
-scale with problem size, transpiling every circuit against the \texttt{FakeSherbrooke} calibration
-snapshot at optimization level 3.
+We measured how each pathway's resources scale with problem size directly from our own
+implementation, by building and transpiling the actual circuits at each size against the
+\texttt{FakeSherbrooke} calibration snapshot at optimization level 3 and reading off the resulting
+gate counts, rather than only evaluating a closed-form asymptotic formula.
 
 \textbf{Variational.} At $n=2,\dots,6$ qubits ($N=2^n=4,\dots,64$), every measured quantity is
 polynomial in $n$, hence \emph{polylogarithmic} in $N$: the ansatz parameter count is the exact
@@ -792,12 +801,15 @@ Denmark.
 \end{acknowledgments}
 
 \section*{AI disclosure}
-Substantial parts of this work's implementation, debugging, numerical verification, and this
-manuscript were produced with the assistance of Claude (Anthropic), used interactively under the
-direction and review of the authors. All physical claims, discretization choices, and numerical
-results in this paper were independently verified against classical reference calculations rather
-than accepted on the model's assertion alone; every proof was checked step by step; every cited
-reference was checked against its original source before inclusion.
+The physics, algorithms, and the great majority of the code in this work are the authors' own: the
+choice of Carleman linearization and QSVT, the variational natural-gradient formulation, the
+discretization, and the fixes described throughout this manuscript originated with the authors.
+Claude (Anthropic) was used interactively, under the authors' direction and review, to help implement
+specific pieces of that design, debug issues the authors identified, run numerical verification, and
+draft parts of this manuscript's text. All physical claims, discretization choices, and numerical
+results in this paper were independently verified by the authors against classical reference
+calculations rather than accepted on the model's assertion alone; every proof was checked step by
+step; every cited reference was checked against its original source before inclusion.
 
 \bibliographystyle{apsrev4-2}
 \begin{thebibliography}{99}
